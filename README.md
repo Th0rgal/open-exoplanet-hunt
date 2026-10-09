@@ -1,0 +1,112 @@
+# 🪐 Open Exoplanet Hunt (`open-exoplanet-hunt`)
+
+**An open, falsification-first collaborative search for unreported exoplanets in public NASA TESS data — humans & AI coding agents welcome.**
+
+[![Verify Candidates & Controls](https://github.com/Th0rgal/open-exoplanet-hunt/actions/workflows/verify-candidates.yml/badge.svg)](https://github.com/Th0rgal/open-exoplanet-hunt/actions/workflows/verify-candidates.yml)
+[![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
+[![Data: NASA MAST TESS](https://img.shields.io/badge/Data-NASA%20MAST%20TESS-orange.svg)](https://archive.stsci.edu/missions-and-data/tess)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+> *"The useful way to use an AI agent for science isn't to ask 'Is this a planet?' — it's to keep giving it ways to prove that it isn't."*
+> — Inspired by [Pavel Rabtsevich's `TIC 4206066` discovery workflow (Oct 2026)](https://x.com/p_rabtsevich/status/2107803696058822742)
+
+---
+
+## 🔭 What Is This Repository?
+
+Seven years of public photometry from NASA's **Transiting Exoplanet Survey Satellite (TESS)** contain millions of multi-epoch light curves. While single-pipeline alerts (`TOI`) and single-year FFI surveys catch high-SNR transits, **real small planets ($1.0\text{–}2.5\,R_\oplus$) around nearby K and M dwarfs still hide in the cross-pipeline multi-year blind spot**:
+- In TESS Years 1–2 (2018–2020), many nearby K/M dwarfs were only recorded in 30-minute Full-Frame Images (`HLSP/tess-spoc`, `HLSP/qlp`).
+- In Years 3–4 (2020–2022), some received a single sector of 2-minute `SPOC` cadence where 4–8 shallow transits fell just short of the multi-sector alert threshold.
+- In Years 5–8 (2023–2026), they were observed again in 200-second FFIs (`HLSP/qlp`).
+
+When stitched coherently across a 5-to-8-year baseline (`TESS SPOC` + `HLSP/tess-spoc` + `HLSP/qlp`), sub-threshold per-sector signals lock in phase at $\text{SNR} > 10\text{–}16\sigma$ — **provided we ruthlessly falsify instrumental artifacts, eclipsing binaries, background blends, and starspot modulation**.
+
+This repository turns that search into an **open, git-native, machine-verified collaborative benchmark** where human researchers, citizen scientists, and AI coding agents (`Claude Code`, `Codex`, `Antigravity`, `Cursor`) collaborate via Pull Requests:
+1. **Master Index of What Has Already Been Found ([`catalog/`](catalog/) & [`docs/EXISTING_DISCOVERIES_INDEX.md`](docs/EXISTING_DISCOVERIES_INDEX.md))**:
+   - Indexes **`15,025` unique TIC stars** across **6,445 confirmed NASA exoplanets (`pscomppars`)**, **8,148 official NASA `TOI`s**, **5,138 community `CTOI`s (ExoFOP-TESS)**, and external AI/ML/citizen-science discoveries (`TIC 4206066`, Warwick `RAVEN`, NASA `ExoMiner++`, Princeton `T16`, `Planet Hunters TESS`, `SHERLOCK`).
+2. **10-Gate Adversarial Falsification Engine ([`scripts/vet_candidate.py`](scripts/vet_candidate.py))**:
+   - Every candidate must survive 10 quantitative falsification gates directly from raw MAST FITS files (including **Blind Leave-One-Epoch-Out (LOEO) temporal prediction**, odd/even depth consistency, phase-$0.5$ secondary eclipse null test, in-transit pixel centroid shift $< 3\sigma$, per-transit jackknife stability, and out-of-transit rotational modulation guards).
+3. **Adversarial Negative-Control Test Suite ([`tests/test_vetting_controls.py`](tests/test_vetting_controls.py))**:
+   - We break our tests on purpose: synthetic odd/even eclipsing binaries, secondary-eclipse binaries, single-sector glitches, centroid-shifted background binaries, and rotational variables are tested in CI on every PR to guarantee the falsification gates never degrade into rubber stamps.
+4. **Shared Target Registry ([`registry/scanned_targets.jsonl`](registry/scanned_targets.jsonl) & [`registry/leaderboard.json`](registry/leaderboard.json))**:
+   - Tracks every TIC star scanned across the community so contributors and autonomous agents coordinate without duplicating work.
+
+---
+
+## 🏆 Verified Candidate & Reference Benchmark Dossiers
+
+| Target | Status | Period ($P$) | Depth ($\Delta F$) | Inferred $R_p$ | Combined BLS SNR | Blind LOEO Holdout $Z$ (per sector) | Gates Passed | Dossier & Plots |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **[`TIC 4206066.01`](candidates/TIC-4206066/REPORT.md)** (*StKM 1-561*, $d=35.6\text{ pc}$, K-dwarf) | `reference_benchmark_ddt100` ([Rabtsevich 2026](https://doi.org/10.5281/zenodo.22967456), TESS DDT #100) | `3.1827846 d` | `448.9 ± 26.9 ppm` | **`1.50 R⊕`** | **`16.56 σ`** | S06: **`+7.63 σ`** · S32: **`+8.69 σ`** · S98: **`+8.29 σ`** | **10 / 10 PASS** | [`REPORT.md`](candidates/TIC-4206066/REPORT.md) · [`certificate.json`](candidates/TIC-4206066/certificate.json) |
+| **[`TIC 69912980`](candidates/TIC-69912980/REPORT.md)** ($d=12.4\text{ pc}$, M3.5V dwarf) | `candidate_pass_all_10` (Autonomous scan; check $0.8238\text{ d}$ sub-harmonic) | `2.1965600 d` | `296.1 ± 38.7 ppm` | **`0.52 R⊕`** | **`8.10 σ`** | S19: **`+4.34 σ`** · S43: **`+3.28 σ`** · S44: **`+2.87 σ`** · S71: **`+4.35 σ`** | **10 / 10 PASS** | [`REPORT.md`](candidates/TIC-69912980/REPORT.md) · [`certificate.json`](candidates/TIC-69912980/certificate.json) |
+| **[`TIC 457195191`](candidates/TIC-457195191/REPORT.md)** ($d=26.1\text{ pc}$, M0V dwarf) | `watchlist_8_plus_gates` (Flagged by Gate 5 Odd/Even $3.71\sigma$) | `10.5147068 d` | `421.3 ± 36.5 ppm` | **`1.22 R⊕`** | **`10.71 σ`** | S05: **`+2.09 σ`** · S32: **`+4.11 σ`** · S98: **`+12.14 σ`** | **9 / 10** (Watchlist) | [`REPORT.md`](candidates/TIC-457195191/REPORT.md) · [`certificate.json`](candidates/TIC-457195191/certificate.json) |
+
+![TIC 4206066 6-Panel Verification Plot](candidates/TIC-4206066/diagnostics.png)
+
+---
+
+## 🛡️ The 10 Adversarial Falsification Gates
+
+Every candidate submitted to [`candidates/`](candidates/) is audited by [`scripts/vet_candidate.py`](scripts/vet_candidate.py) and [`scripts/verify_all.py`](scripts/verify_all.py) against 10 strict gates:
+
+| Gate | Name | Falsification Target | Passing Criterion |
+| :---: | :--- | :--- | :--- |
+| **1** | `gate1_catalog_dedup` | Rediscovering known planets / TOIs / CTOIs | Not present in the `15,025` known TICs (`pscomppars` + `TOI` + `CTOI`) |
+| **2** | `gate2_multi_sector_baseline` | Single-sector instrumental systematics | Observed in $\ge 2$ distinct TESS sectors with $\ge 6$ distinct transits |
+| **3** | `gate3_combined_bls_snr` | Low-SNR noise fluctuations | Combined detrended Box Least Squares $\text{SNR} \ge 8.0\,\sigma$ |
+| **4** | `gate4_leave_one_epoch_out` | Overfitted period aliases / non-repeating dips | **Blind Leave-One-Epoch-Out (LOEO)**: fit $(P, T_0)$ on $N-1$ sectors, predict hidden sector $\to$ $\min Z \ge 2.0\,\sigma$ and $\text{mean } Z \ge 3.5\,\sigma$ |
+| **5** | `gate5_odd_even_consistency` | $2\times P$ equal-mass eclipsing binaries | Odd vs. Even transit depth difference $< 2.5\,\sigma$ (both $> 0$) |
+| **6** | `gate6_secondary_eclipse_null` | Self-luminous stellar/brown-dwarf companions | Secondary eclipse at phase $0.5 P$ has $\text{SNR} < 2.5\,\sigma$ or depth $< 30\%$ of primary |
+| **7** | `gate7_physical_plausibility` | Unphysical stellar-sized dips or grazing geometries | $0.4\,R_\oplus \le R_p \le 18.0\,R_\oplus$ and $0.20 \le T_{14} / T_{14,\text{circ}}(b=0) \le 2.20$ |
+| **8** | `gate8_centroid_stability` | Background Eclipsing Binaries (BEBs) on nearby pixels | In-transit vs. out-of-transit centroid shift $< 3.0\,\sigma$ and $< 2.5''$ |
+| **9** | `gate9_per_transit_coherence` | Single-outlier glitches or data-gap edges | $\ge 70\%$ of individual transits have $\Delta F_i > 0$, and **Jackknife SNR** (dropping strongest transit) $\ge 6.5\,\sigma$ |
+| **10** | `gate10_rotational_modulation_guard` | Starspot rotational modulation mimicking dips | Out-of-transit sinusoidal amplitude at $P$ is $< 50\%$ of transit depth |
+
+---
+
+## 🚀 Quick Start: Join the Hunt (Humans & AI Agents)
+
+### 1. Clone & Set Up Environment
+```bash
+git clone https://github.com/Th0rgal/open-exoplanet-hunt.git
+cd open-exoplanet-hunt
+uv venv .venv
+uv pip install --python .venv/bin/python astropy numpy scipy matplotlib requests pytest
+```
+
+### 2. Run Verifier & Adversarial Unit Tests
+```bash
+make verify
+make test
+```
+
+### 3. Scan Unreported Multi-Sector Nearby K/M Dwarfs
+```bash
+# Automatically queries MAST TIC, filters out all 15,025 known TOI/CTOI/planet stars
+# and all previously scanned targets, downloads multi-epoch FITS light curves,
+# runs two-stage per-sector + multi-year phase-locking BLS, and applies all 10 gates:
+.venv/bin/python -B scripts/hunt_sectors.py --max-targets 10 --min-sectors 3 --page 2
+```
+
+### 4. Deep-Dive Vet a Specific Star (`TIC ID`)
+```bash
+.venv/bin/python -B scripts/vet_candidate.py --tic <TIC_ID>
+```
+
+### 5. Submit a Pull Request!
+- Whether your batch scan falsifies 20 stars (appending them to [`registry/scanned_targets.jsonl`](registry/scanned_targets.jsonl) so nobody else wastes compute scanning them) or uncovers a new 10/10 candidate (`candidates/TIC-<ID>/`), open a PR!
+- Every PR is automatically audited by GitHub Actions CI and reviewed against raw NASA MAST FITS data.
+
+---
+
+## 📚 Documentation & Landscape Index
+
+- **[`docs/EXISTING_DISCOVERIES_INDEX.md`](docs/EXISTING_DISCOVERIES_INDEX.md)**: Complete technical review of Pavel Rabtsevich's `TIC 4206066` discovery, plus a comprehensive survey and index of `RAVEN` (Warwick), `ExoMiner++` (NASA Ames), `T16` (Princeton), `Planet Hunters TESS` (Zooniverse / Nora Eisner), `SHERLOCK` (Pozuelos et al.), `TRICERATOPS`, and independent open-source GitHub pipelines.
+- **[`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md)**: Detailed collaborative research plan, mathematical formulation of two-stage cross-sector coincidence + multi-year phase-locking, and preregistration protocol.
+- **[`CONTRIBUTING.md`](CONTRIBUTING.md)**: Workflow and review rubric for human researchers and autonomous coding agents.
+
+---
+
+## ⚖️ Scientific Scope & Disclaimer
+
+All signals identified in this repository are **unconfirmed exoplanet candidates**, not confirmed planets. Confirmation of any transiting candidate requires independent follow-up (such as high-resolution speckle/AO imaging to rule out bound companions within $<1''$, precision radial velocities, or preregistered future space-based transit observations).

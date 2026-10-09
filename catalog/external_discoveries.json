@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "description": "Index of independent AI-agent, machine-learning, citizen-science, and open-source exoplanet discovery projects and notable candidates (2018-2026).",
+  "projects": [
+    {
+      "id": "rabtsevich-tic4206066-2026",
+      "name": "Pavel Rabtsevich — AI-Assisted TESS Vetting & Preregistered DDT #100",
+      "authors": ["Pavel Rabtsevich"],
+      "year": 2026,
+      "category": "independent_ai_agent",
+      "tools": ["Claude Code (Opus 5.5, Fable 5.1)", "OpenAI Codex", "TRICERATOPS", "Lightkurve", "Astropy"],
+      "summary": "Independent researcher used Claude Code and Codex in an adversarial falsification loop (74 analyses, 1,000+ scripts, leave-one-year-out prediction across 2018/2020/2025, 36 catalogs + 340,505 TESS alerts cross-checked) to identify a 3.1828 d (~1.4 R_earth) candidate and tentative 11.1328 d (~2.2 R_earth) signal around the nearby K dwarf TIC 4206066 (StKM 1-561, 35.6 pc). Approved for NASA TESS Director's Discretionary Time (DDT Program #100) in Sector 110 (Oct 31 - Nov 26, 2026) with preregistered transit times and decision rules.",
+      "links": {
+        "x_thread": "https://x.com/p_rabtsevich/status/2107803696058822742",
+        "reddit": "https://www.reddit.com/r/ClaudeAI/comments/1wzw8zd/i_think_i_found_a_planet_nobody_knew_existed_i/",
+        "preprint_doi": "https://doi.org/10.5281/zenodo.22967456",
+        "data_code_doi": "https://doi.org/10.5281/zenodo.22967099",
+        "preregistration_doi": "https://doi.org/10.5281/zenodo.23175179",
+        "interactive_3d": "https://tic4206066.pages.dev",
+        "tess_ddt": "https://tess.mit.edu/science/ddt/"
+      }
+    },
+    {
+      "id": "warwick-raven-2026",
+      "name": "RAVEN (RAnking and Validation of ExoplaNets) — University of Warwick",
+      "authors": ["A. Hadjigeorghiou", "D. J. Armstrong", "et al."],
+      "year": 2026,
+      "category": "ml_validation_pipeline",
+      "tools": ["Gradient Boosted Decision Trees (XGBoost)", "Gaussian Process Classifiers", "Bayesian Positional Probability"],
+      "summary": "Machine learning validation pipeline applied to 2.2 million stars in TESS Years 1-4 Full-Frame Images (FFIs). Statistically validated 118 new exoplanets (including 31 previously unreported discoveries) and ranked over 2,000 high-quality candidates.",
+      "links": {
+        "github": "https://github.com/ahadjigeorghiou/RAVEN",
+        "arxiv": "https://arxiv.org/abs/2603.22597"
+      }
+    },
+    {
+      "id": "nasa-exominer-plusplus-2026",
+      "name": "ExoMiner & ExoMiner++ — NASA Ames Research Center",
+      "authors": ["Hamed Valizadegan", "Miguel J. S. Martinho", "et al."],
+      "year": 2026,
+      "category": "deep_learning_pipeline",
+      "tools": ["Deep Convolutional & Multi-Branch Neural Network", "Kepler-to-TESS Transfer Learning"],
+      "summary": "Deep learning classifier trained on Kepler and TESS Data Validation (DV) products. Validated 370+ Kepler planets and identified ~7,000 exoplanet candidates in TESS multi-sector TCE catalogs.",
+      "links": {
+        "github": "https://github.com/nasa/ExoMiner",
+        "arxiv": "https://arxiv.org/abs/2502.09790"
+      }
+    },
+    {
+      "id": "princeton-t16-2026",
+      "name": "Princeton T16 Survey — 83.7M TESS Year-1 FFI Stars",
+      "authors": ["Princeton T16 Collaboration"],
+      "year": 2026,
+      "category": "ml_ffi_survey",
+      "tools": ["Random Forest Classifier", "Difference Image Photometry (mast:HLSP/t16)", "BLS"],
+      "summary": "Semi-automated ML survey of 83,717,159 stars down to T=16 in TESS Year-1 Full-Frame Images, identifying 11,554 exoplanet candidates (10,091 previously unreported, 1,052 known TOIs, 411 single-transit events) and confirming hot Jupiter TIC 183374187 b via Magellan radial velocities.",
+      "links": {
+        "mast_hlsp": "https://archive.stsci.edu/hlsp/t16"
+      }
+    },
+    {
+      "id": "planet-hunters-tess",
+      "name": "Planet Hunters TESS (PHT) & Citizen Science Vetting Ecosystem",
+      "authors": ["Nora L. Eisner", "Sam Lee (orionlee)", "Rafael Rodrigues (exo-pt)", "Michelle Kunimoto", "30,000+ Zooniverse Volunteers"],
+      "year": 2026,
+      "category": "citizen_science",
+      "tools": ["Zooniverse Visual Inspection", "LATTE (Lightcurve Analysis Tool for Transiting Exoplanets)", "TESS-Centroid_vetting", "PH_TESS_I_LightCurveViewer"],
+      "summary": "Global citizen-science project inspecting TESS light curves for single-transit, long-period, circumbinary, and multi-star signals missed by automated BLS/TPS pipelines. Notable discoveries include TOI-1338 b (circumbinary planet), TOI-813 b, HD 152843 b/c, TOI-4633 c ('Percival'), TOI-791 b/c, and compact triple-star system TIC 290061484.",
+      "links": {
+        "zooniverse": "https://www.zooniverse.org/projects/nora-dot-eisner/planet-hunters-tess",
+        "latte_github": "https://github.com/noraeisner/LATTE",
+        "centroid_vetting_github": "https://github.com/exo-pt/TESS-Centroid_vetting",
+        "viewer_github": "https://github.com/orionlee/PH_TESS_I_LightCurveViewer"
+      }
+    },
+    {
+      "id": "sherlock-pipeline",
+      "name": "SHERLOCK (Searching for Hints of Exoplanets fRom Light curves Of spaCe-based seeKers)",
+      "authors": ["Francisco J. Pozuelos", "Martín Dévora-Pajares", "et al."],
+      "year": 2026,
+      "category": "open_source_pipeline",
+      "tools": ["Lightkurve", "Wotan", "Transit Least Squares (TLS)", "TRICERATOPS", "Allesfitter"],
+      "summary": "Community open-source end-to-end Python pipeline for multi-detrend transit searching, vetting, and statistical validation on TESS/Kepler light curves. Used to discover the TOI-2267 3-planet compact binary system and numerous M-dwarf candidates.",
+      "links": {
+        "github": "https://github.com/SHERLOCK-pipeline/sherlockpipe"
+      }
+    },
+    {
+      "id": "independent-github-hunters-2025-2026",
+      "name": "Open-Source Independent TESS Hunters on GitHub (2025-2026)",
+      "authors": ["Kevin Zhu (kzhu2099)", "Muhammad Hashir Hussain (HashirHussain12)", "Kayra Sari (thekayrasari)", "3equalspi"],
+      "year": 2026,
+      "category": "independent_open_source",
+      "tools": ["Lightkurve", "Astropy BLS", "Transit Least Squares (TLS)", "TRICERATOPS", "batman"],
+      "summary": "Independent open-source repositories automating multi-sector TESS light-curve stitching, upward-only MAD flare clipping, BLS-to-TLS two-stage period narrowing, odd/even depth tests, and ExoFOP TOI/CTOI cross-referencing.",
+      "links": {
+        "kzhu2099": "https://github.com/kzhu2099/Exoplanets",
+        "hashir_hussain": "https://github.com/HashirHussain12/TESS-Exoplanet-Finder",
+        "thekayrasari": "https://github.com/thekayrasari/exoplanet-detector",
+        "3equalspi": "https://github.com/3equalspi/TESS-Exoplanet-Search"
+      }
+    }
+  ],
+  "indexed_candidates": [
+    {
+      "tic_id": 4206066,
+      "name": "TIC 4206066.01 (StKM 1-561 b candidate)",
+      "period_d": 3.1827873,
+      "t0_btjd": 1468.42182,
+      "depth_ppm": 445.0,
+      "dur_h": 1.73,
+      "rade": 1.44,
+      "star_teff_k": 4010,
+      "star_rad_rsun": 0.6481,
+      "star_dist_pc": 35.62,
+      "sectors": [6, 32, 98],
+      "source": "Pavel Rabtsevich (2026) — Zenodo 10.5281/zenodo.22967456 & TESS DDT #100",
+      "status": "candidate_preregistered_ddt100",
+      "url": "https://doi.org/10.5281/zenodo.22967456"
+    },
+    {
+      "tic_id": 4206066,
+      "name": "TIC 4206066.02 (StKM 1-561 c tentative signal)",
+      "period_d": 11.132786,
+      "t0_btjd": 1473.72382,
+      "depth_ppm": 636.6,
+      "dur_h": 1.92,
+      "rade": 2.2,
+      "star_teff_k": 4010,
+      "star_rad_rsun": 0.6481,
+      "star_dist_pc": 35.62,
+      "sectors": [6, 32, 98],
+      "source": "Pavel Rabtsevich (2026) — Zenodo 10.5281/zenodo.22967456 & TESS DDT #100",
+      "status": "tentative_preregistered_ddt100",
+      "url": "https://doi.org/10.5281/zenodo.23175179"
+    },
+    {
+      "tic_id": 183374187,
+      "name": "TIC 183374187 b",
+      "period_d": null,
+      "t0_btjd": null,
+      "depth_ppm": null,
+      "dur_h": null,
+      "rade": null,
+      "star_teff_k": null,
+      "star_rad_rsun": null,
+      "star_dist_pc": null,
+      "sectors": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+      "source": "Princeton T16 Survey (April 2026)",
+      "status": "confirmed_rv_magellan",
+      "url": "https://archive.stsci.edu/hlsp/t16"
+    },
+    {
+      "tic_id": 290061484,
+      "name": "TIC 290061484 (Compact Triple-Star System)",
+      "period_d": 1.79,
+      "t0_btjd": null,
+      "depth_ppm": null,
+      "dur_h": null,
+      "rade": null,
+      "star_teff_k": null,
+      "star_rad_rsun": null,
+      "star_dist_pc": null,
+      "sectors": [],
+      "source": "Planet Hunters TESS / Kostov et al. (2024)",
+      "status": "confirmed_triple_star_system",
+      "url": "https://www.zooniverse.org/projects/nora-dot-eisner/planet-hunters-tess"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+name: Verify Candidates & Falsification Controls
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install astropy numpy scipy matplotlib requests
+      - name: Verify repository certificates and catalog integrity
+        run: python3 -B scripts/verify_all.py
+      - name: Run adversarial falsification unit tests
+        run: python3 -B -m unittest discover -s tests -v
