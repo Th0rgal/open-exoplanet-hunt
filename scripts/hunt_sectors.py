@@ -185,7 +185,15 @@ def run_hunt(
             failed_gates = [k for k, g in gates.items() if not g["pass"]]
 
             verdict = "CANDIDATE_PASS_ALL_10" if eval_res["all_gates_passed"] else (
-                "WATCHLIST_8_PLUS_GATES" if n_passed >= 8 and gates["gate3_combined_bls_snr"]["pass"] and gates["gate4_leave_one_epoch_out"]["pass"] else "REJECTED_BY_FALSIFICATION"
+                "WATCHLIST_8_PLUS_GATES"
+                if (
+                    gates["gate4_leave_one_epoch_out"]["pass"]
+                    and (
+                        (n_passed >= 8 and gates["gate3_combined_bls_snr"]["pass"])
+                        or (n_passed >= 9 and eph["combined_bls_snr"] >= 7.5)
+                    )
+                )
+                else "REJECTED_BY_FALSIFICATION"
             )
 
             log_entry = {
