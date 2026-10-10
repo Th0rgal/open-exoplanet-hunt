@@ -151,9 +151,19 @@ def download_and_load_sector(tic_id: int, prod: dict, window_days: float = 0.75)
     fpath = CACHE_DIR / fname
     if not fpath.exists():
         url = f"https://mast.stsci.edu/api/v0.1/Download/file?uri={urllib.parse.quote(prod['uri'], safe=':/')}"
-        req = urllib.request.Request(url, headers={"User-Agent": "open-exoplanet-hunt/1.0"})
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            fpath.write_bytes(resp.read())
+        last_err: Exception | None = None
+        for attempt in range(4):
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": "open-exoplanet-hunt/1.0"})
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    fpath.write_bytes(resp.read())
+                break
+            except Exception as exc:
+                last_err = exc
+                if attempt + 1 < 4:
+                    time.sleep(1.5 * (2 ** attempt))
+        else:
+            raise RuntimeError(f"Failed to download {fname} after 4 attempts: {last_err}") from last_err
     raw_bytes = fpath.read_bytes()
     file_sha = sha256(raw_bytes).hexdigest()
 
@@ -472,7 +482,7 @@ def evaluate_signal_from_arrays(
         odd_dip, odd_err, even_dip, even_err, odd_even_diff_sigma = 0.0, 999.0, 0.0, 999.0, 99.0
         gate5_pass = False
 
-    # Gate 6: Secondary eclipse at phase 0.5
+    # Gate 6: Secondary eclipse / phase-0.5 anomaly null test
     ph_sec = ((t_all - (T0 + 0.5 * P) + 0.5 * P) % P) - 0.5 * P
     in_sec = np.abs(ph_sec) <= 0.5 * dur
     if np.sum(in_sec) >= 2:
@@ -481,7 +491,7 @@ def evaluate_signal_from_arrays(
         sec_snr = sec_dip / sec_err
     else:
         sec_dip, sec_err, sec_snr = 0.0, 999.0, 0.0
-    gate6_pass = (sec_snr < 2.5) or (sec_dip < 0.30 * dip_ppm)
+    gate6_pass = (abs(sec_snr) < 2.5) or (abs(sec_dip) < 0.30 * dip_ppm and sec_snr > -3.0)
 
     # Gate 7: Physical radius & circular transit duration plausibility
     r_star = tic_meta["rad_rsun"]
@@ -510,7 +520,7 @@ def evaluate_signal_from_arrays(
     # Gate 9: Per-transit coherence & jackknife stability
     gate9_pass = (pos_transit_fraction >= 0.70) and (jackknife_snr >= 6.5)
 
-    # Gate 10: Out-of-transit sinusoidal modulation guard (starspot check)
+    # Gate 10: Out-of-transit sinusoidal modulation guard (starspot & sub-harmonic check)
     # Fit sin/cos at P, 2P, P/2 on out-of-transit SAP flux
     oot_mask = np.abs(phase) > 0.75 * dur
     t_oot = t_all[oot_mask]
@@ -522,13 +532,15 @@ def evaluate_signal_from_arrays(
         coeffs, _, _, _ = np.linalg.lstsq(design, f_oot, rcond=None)
         amp_ppm = float(math.hypot(coeffs[0], coeffs[1]) * 1e6)
         max_harm_amp_ppm = max(max_harm_amp_ppm, amp_ppm)
-    # Compare on detrended out-of-transit flux as well
+    # Compare on detrended out-of-transit flux across fundamental and sub-harmonics (0.4P, 0.5P, 1.0P)
     f_det_oot = f_all[oot_mask] - 1.0
-    omega1 = 2.0 * math.pi / P
-    design1 = np.column_stack([np.sin(omega1 * t_oot), np.cos(omega1 * t_oot), np.ones(len(t_oot))])
-    c_det, _, _, _ = np.linalg.lstsq(design1, f_det_oot, rcond=None)
-    det_sin_amp_ppm = float(math.hypot(c_det[0], c_det[1]) * 1e6)
-    gate10_pass = det_sin_amp_ppm < 0.50 * dip_ppm
+    det_sin_amp_ppm = 0.0
+    for mult_d in (0.4, 0.5, 1.0):
+        omega1 = 2.0 * math.pi / (P * mult_d)
+        design1 = np.column_stack([np.sin(omega1 * t_oot), np.cos(omega1 * t_oot), np.ones(len(t_oot))])
+        c_det, _, _, _ = np.linalg.lstsq(design1, f_det_oot, rcond=None)
+        det_sin_amp_ppm = max(det_sin_amp_ppm, float(math.hypot(c_det[0], c_det[1]) * 1e6))
+    gate10_pass = det_sin_amp_ppm < 0.32 * dip_ppm
 
     gates = {
         "gate1_catalog_dedup": {
