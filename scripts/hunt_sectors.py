@@ -57,23 +57,30 @@ def query_candidate_km_dwarfs(
     page_size: int = 200,
     page: int = 1,
 ) -> list[dict]:
-    res = mast_invoke({
-        "service": "Mast.Catalogs.Filtered.Tic.Rows",
-        "format": "json",
-        "params": {
-            "columns": "ID,ra,dec,Tmag,Teff,rad,mass,d,plx,lum,logg,contratio",
-            "filters": [
-                {"paramName": "Tmag", "values": [{"min": tmag_min, "max": tmag_max}]},
-                {"paramName": "Teff", "values": [{"min": teff_min, "max": teff_max}]},
-                {"paramName": "rad", "values": [{"min": 0.20, "max": rad_max}]},
-                {"paramName": "d", "values": [{"min": 5.0, "max": dist_max}]},
-                {"paramName": "objType", "values": ["STAR"]},
-            ],
-        },
-        "pagesize": page_size,
-        "page": page,
-    }, timeout=45)
-    rows = res.get("data", [])
+    cache_dir = ROOT / ".cache/mast"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_file = cache_dir / f"tic_page_{page}_{page_size}.json"
+    if cache_file.exists():
+        rows = json.loads(cache_file.read_text(encoding="utf-8"))
+    else:
+        res = mast_invoke({
+            "service": "Mast.Catalogs.Filtered.Tic.Rows",
+            "format": "json",
+            "params": {
+                "columns": "ID,ra,dec,Tmag,Teff,rad,mass,d,plx,lum,logg,contratio",
+                "filters": [
+                    {"paramName": "Tmag", "values": [{"min": tmag_min, "max": tmag_max}]},
+                    {"paramName": "Teff", "values": [{"min": teff_min, "max": teff_max}]},
+                    {"paramName": "rad", "values": [{"min": 0.20, "max": rad_max}]},
+                    {"paramName": "d", "values": [{"min": 5.0, "max": dist_max}]},
+                    {"paramName": "objType", "values": ["STAR"]},
+                ],
+            },
+            "pagesize": page_size,
+            "page": page,
+        }, timeout=60, retries=3)
+        rows = res.get("data", [])
+        cache_file.write_text(json.dumps(rows), encoding="utf-8")
     out = []
     for r in rows:
         if r.get("ID") is None or r.get("rad") is None or r.get("Teff") is None:

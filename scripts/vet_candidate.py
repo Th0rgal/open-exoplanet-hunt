@@ -46,15 +46,23 @@ R_SUN_M = 6.957e8
 DAY_S = 86400.0
 
 
-def mast_invoke(request_obj: dict, timeout: int = 30) -> dict:
+def mast_invoke(request_obj: dict, timeout: int = 60, retries: int = 3) -> dict:
     data = urllib.parse.urlencode({"request": json.dumps(request_obj)}).encode("utf-8")
-    req = urllib.request.Request(
-        "https://mast.stsci.edu/api/v0/invoke",
-        data=data,
-        headers={"User-Agent": "open-exoplanet-hunt/1.0"},
-    )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+    last_err: Exception | None = None
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(
+                "https://mast.stsci.edu/api/v0/invoke",
+                data=data,
+                headers={"User-Agent": "open-exoplanet-hunt/1.0"},
+            )
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except Exception as exc:
+            last_err = exc
+            if attempt + 1 < retries:
+                time.sleep(2.0 * (attempt + 1))
+    raise RuntimeError(f"MAST API invoke failed after {retries} attempts: {last_err}") from last_err
 
 
 def fetch_tic_metadata(tic_id: int) -> dict:
