@@ -187,11 +187,9 @@ def run_hunt(
             verdict = "CANDIDATE_PASS_ALL_10" if eval_res["all_gates_passed"] else (
                 "WATCHLIST_8_PLUS_GATES"
                 if (
-                    gates["gate4_leave_one_epoch_out"]["pass"]
-                    and (
-                        (n_passed >= 8 and gates["gate3_combined_bls_snr"]["pass"])
-                        or (n_passed >= 9 and eph["combined_bls_snr"] >= 7.5)
-                    )
+                    n_passed >= 9
+                    and gates["gate4_leave_one_epoch_out"]["mean_holdout_z_sigma"] >= 3.5
+                    and eph["combined_bls_snr"] >= 7.5
                 )
                 else "REJECTED_BY_FALSIFICATION"
             )
