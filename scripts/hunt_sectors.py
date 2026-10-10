@@ -189,6 +189,7 @@ def run_hunt(
                 if (
                     n_passed >= 9
                     and gates["gate4_leave_one_epoch_out"]["mean_holdout_z_sigma"] >= 3.5
+                    and gates["gate5_odd_even_consistency"]["diff_sigma"] < 4.0
                     and eph["combined_bls_snr"] >= 7.5
                 )
                 else "REJECTED_BY_FALSIFICATION"
