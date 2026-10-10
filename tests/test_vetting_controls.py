@@ -131,6 +131,17 @@ class TestAdversarialVettingGates(unittest.TestCase):
         self.assertFalse(res["gates"]["gate10_rotational_modulation_guard"]["pass"])
         self.assertFalse(res["all_gates_passed"])
 
+    def test_negative_control_third_harmonic_rotator_rejected_by_gate10(self) -> None:
+        meta, secs = make_synthetic_sectors(odd_depth=450e-6, even_depth=450e-6)
+        p_sub = 3.1828 / 3.0
+        for s in secs:
+            wave = 250e-6 * np.cos(2.0 * np.pi * (s["t"] - 1468.81) / p_sub)
+            s["f"] = s["f"] - wave
+            s["f_sap"] = s["f_sap"] - 5.0 * wave
+        res = evaluate_signal_from_arrays(meta, secs, target_period=3.1828)
+        self.assertFalse(res["gates"]["gate10_rotational_modulation_guard"]["pass"])
+        self.assertFalse(res["all_gates_passed"])
+
     def test_optimized_python_rejected_on_all_entrypoints(self) -> None:
         for script in ("sync_catalogs.py", "vet_candidate.py", "hunt_sectors.py", "verify_all.py"):
             proc = subprocess.run(

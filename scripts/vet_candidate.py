@@ -521,26 +521,26 @@ def evaluate_signal_from_arrays(
     gate9_pass = (pos_transit_fraction >= 0.70) and (jackknife_snr >= 6.5)
 
     # Gate 10: Out-of-transit sinusoidal modulation guard (starspot & sub-harmonic check)
-    # Fit sin/cos at P, 2P, P/2 on out-of-transit SAP flux
+    # Fit sin/cos at P, 2P, P/2, P/3 on out-of-transit SAP flux
     oot_mask = np.abs(phase) > 0.75 * dur
     t_oot = t_all[oot_mask]
     f_oot = f_sap_all[oot_mask] - np.median(f_sap_all[oot_mask])
     max_harm_amp_ppm = 0.0
-    for mult in (0.5, 1.0, 2.0):
+    for mult in (1.0 / 3.0, 0.5, 1.0, 2.0):
         omega = 2.0 * math.pi / (P * mult)
         design = np.column_stack([np.sin(omega * t_oot), np.cos(omega * t_oot), np.ones(len(t_oot))])
         coeffs, _, _, _ = np.linalg.lstsq(design, f_oot, rcond=None)
         amp_ppm = float(math.hypot(coeffs[0], coeffs[1]) * 1e6)
         max_harm_amp_ppm = max(max_harm_amp_ppm, amp_ppm)
-    # Compare on detrended out-of-transit flux across fundamental and sub-harmonics (0.4P, 0.5P, 1.0P)
+    # Compare on detrended out-of-transit flux across fundamental and rational sub-harmonics
     f_det_oot = f_all[oot_mask] - 1.0
     det_sin_amp_ppm = 0.0
-    for mult_d in (0.4, 0.5, 1.0):
+    for mult_d in (0.20, 0.25, 1.0 / 3.0, 0.40, 0.50, 2.0 / 3.0, 1.0):
         omega1 = 2.0 * math.pi / (P * mult_d)
         design1 = np.column_stack([np.sin(omega1 * t_oot), np.cos(omega1 * t_oot), np.ones(len(t_oot))])
         c_det, _, _, _ = np.linalg.lstsq(design1, f_det_oot, rcond=None)
         det_sin_amp_ppm = max(det_sin_amp_ppm, float(math.hypot(c_det[0], c_det[1]) * 1e6))
-    gate10_pass = det_sin_amp_ppm < 0.32 * dip_ppm
+    gate10_pass = (det_sin_amp_ppm < 0.32 * dip_ppm) and (max_harm_amp_ppm < 3.5 * dip_ppm)
 
     gates = {
         "gate1_catalog_dedup": {
