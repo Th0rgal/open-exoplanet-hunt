@@ -117,124 +117,138 @@ def run_hunt(
     page: int = 1,
 ) -> list[dict]:
     known, scanned = load_known_and_scanned()
-    stars = query_candidate_km_dwarfs(
-        tmag_min=tmag_min,
-        tmag_max=tmag_max,
-        teff_min=teff_min,
-        teff_max=teff_max,
-        dist_max=dist_max,
-        page=page,
-    )
-    print(f"Queried {len(stars)} nearby K/M dwarfs from MAST TIC (page={page}).")
-
     results = []
     processed = 0
-    for star in stars:
-        if processed >= max_targets:
+    cur_page = page
+    while processed < max_targets and cur_page < page + 10:
+        stars = query_candidate_km_dwarfs(
+            tmag_min=tmag_min,
+            tmag_max=tmag_max,
+            teff_min=teff_min,
+            teff_max=teff_max,
+            dist_max=dist_max,
+            page=cur_page,
+        )
+        if not stars:
             break
-        tic_id = star["tic_id"]
-        if tic_id in known or tic_id in scanned:
-            continue
+        print(f"Queried {len(stars)} nearby K/M dwarfs from MAST TIC (page={cur_page}).")
+        found_on_page = 0
+        for star in stars:
+            if processed >= max_targets:
+                break
+            tic_id = star["tic_id"]
+            if tic_id in known or tic_id in scanned:
+                continue
 
-        try:
-            prods = discover_sector_products(tic_id)
-        except Exception as exc:
-            print(f"  [skip] TIC {tic_id}: MAST product query error: {exc}")
-            continue
+            try:
+                prods = discover_sector_products(tic_id)
+            except Exception as exc:
+                print(f"  [skip] TIC {tic_id}: MAST product query error: {exc}")
+                continue
 
-        if len(prods) < min_sectors:
-            continue
+            if len(prods) < min_sectors:
+                continue
+            found_on_page += 1
 
-        # Limit to at most 6 well-separated or highest-priority sectors for fast multi-year baseline
-        if len(prods) > 6:
-            idxs = [0, 1, len(prods) // 2 - 1, len(prods) // 2, len(prods) - 2, len(prods) - 1]
-            prods = [prods[i] for i in sorted(set(idxs))]
+            # Limit to at most 6 well-separated or highest-priority sectors for fast multi-year baseline
+            if len(prods) > 6:
+                idxs = [0, 1, len(prods) // 2 - 1, len(prods) // 2, len(prods) - 2, len(prods) - 1]
+                prods = [prods[i] for i in sorted(set(idxs))]
 
-        print(f"[{processed + 1}/{max_targets}] Scanning TIC {tic_id} (Tmag={star['tmag']:.2f}, Teff={star['teff_k']:.0f}K, R={star['rad_rsun']:.2f}Rsun, d={star['dist_pc']:.1f}pc, sectors={[p['sector'] for p in prods]})...")
-        try:
-            sectors_data = [download_and_load_sector(tic_id, p) for p in prods]
-            eval_res = evaluate_signal_from_arrays(
-                star,
-                sectors_data,
-                target_period=None,
-                period_min=1.1,
-                period_max=15.0,
-                allow_known=False,
+            print(f"[{processed + 1}/{max_targets}] Scanning TIC {tic_id} (Tmag={star['tmag']:.2f}, Teff={star['teff_k']:.0f}K, R={star['rad_rsun']:.2f}Rsun, d={star['dist_pc']:.1f}pc, sectors={[p['sector'] for p in prods]})...")
+            try:
+                sectors_data = []
+                for p in prods:
+                    try:
+                        sectors_data.append(download_and_load_sector(tic_id, p))
+                    except Exception as sec_exc:
+                        print(f"  [skip-sector] TIC {tic_id} s{p['sector']}: {sec_exc}")
+                if len(sectors_data) < min_sectors:
+                    continue
+                eval_res = evaluate_signal_from_arrays(
+                    star,
+                    sectors_data,
+                    target_period=None,
+                    period_min=1.1,
+                    period_max=15.0,
+                    allow_known=False,
+                )
+            except Exception as exc:
+                print(f"  [error] TIC {tic_id}: {exc}")
+                continue
+
+            processed += 1
+            scanned.add(tic_id)
+            eph = eval_res["ephemeris"]
+            gates = eval_res["gates"]
+            n_passed = sum(1 for g in gates.values() if g["pass"])
+            failed_gates = [k for k, g in gates.items() if not g["pass"]]
+
+            verdict = "CANDIDATE_PASS_ALL_10" if eval_res["all_gates_passed"] else (
+                "WATCHLIST_8_PLUS_GATES" if n_passed >= 8 and gates["gate3_combined_bls_snr"]["pass"] and gates["gate4_leave_one_epoch_out"]["pass"] else "REJECTED_BY_FALSIFICATION"
             )
-        except Exception as exc:
-            print(f"  [error] TIC {tic_id}: {exc}")
-            continue
 
-        processed += 1
-        scanned.add(tic_id)
-        eph = eval_res["ephemeris"]
-        gates = eval_res["gates"]
-        n_passed = sum(1 for g in gates.values() if g["pass"])
-        failed_gates = [k for k, g in gates.items() if not g["pass"]]
-
-        verdict = "CANDIDATE_PASS_ALL_10" if eval_res["all_gates_passed"] else (
-            "WATCHLIST_8_PLUS_GATES" if n_passed >= 8 and gates["gate3_combined_bls_snr"]["pass"] and gates["gate4_leave_one_epoch_out"]["pass"] else "REJECTED_BY_FALSIFICATION"
-        )
-
-        log_entry = {
-            "scanned_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            "tic_id": tic_id,
-            "tmag": star["tmag"],
-            "teff_k": star["teff_k"],
-            "rad_rsun": star["rad_rsun"],
-            "dist_pc": star["dist_pc"],
-            "sectors": [s["sector"] for s in sectors_data],
-            "best_period_d": eph["period_d"],
-            "t0_btjd": eph["t0_btjd"],
-            "weighted_dip_ppm": eph["weighted_dip_ppm"],
-            "inferred_rp_rearth": eph["inferred_rp_rearth"],
-            "combined_bls_snr": eph["combined_bls_snr"],
-            "loeo_min_z": gates["gate4_leave_one_epoch_out"]["min_holdout_z_sigma"],
-            "loeo_mean_z": gates["gate4_leave_one_epoch_out"]["mean_holdout_z_sigma"],
-            "gates_passed": n_passed,
-            "failed_gates": failed_gates,
-            "verdict": verdict,
-        }
-        append_scan_log(log_entry)
-        results.append(log_entry)
-        print(
-            f"  -> {verdict} ({n_passed}/10 gates) | P={eph['period_d']:.6f} d | "
-            f"dip={eph['weighted_dip_ppm']:.0f} ppm (Rp={eph['inferred_rp_rearth']:.2f} R⊕) | "
-            f"SNR={eph['combined_bls_snr']:.2f} | LOEO mean Z={gates['gate4_leave_one_epoch_out']['mean_holdout_z_sigma']:.2f}σ | "
-            f"failed={failed_gates}"
-        )
-
-        # Save full dossier if it passes all 10 gates or is a high-priority watchlist target
-        if verdict in ("CANDIDATE_PASS_ALL_10", "WATCHLIST_8_PLUS_GATES"):
-            out_dir = ROOT / f"candidates/TIC-{tic_id}"
-            out_dir.mkdir(parents=True, exist_ok=True)
-            render_diagnostic_plot(star, eval_res, out_dir / "diagnostics.png")
-            primary_clean = {k: v for k, v in eval_res.items() if k != "_arrays"}
-            cert = {
-                "schema_version": 1,
+            log_entry = {
+                "scanned_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                 "tic_id": tic_id,
-                "status": verdict.lower(),
-                "generated_utc": log_entry["scanned_utc"],
-                "stellar_parameters": star,
-                "sectors_used": [
-                    {
-                        "sector": s["sector"],
-                        "pipeline": s["pipeline"],
-                        "exptime_s": s["exptime_s"],
-                        "uri": s["uri"],
-                        "flux_col": s["flux_col"],
-                        "sha256": s["sha256"],
-                        "n_points": s["n_points"],
-                        "mad_ppm": round(s["mad_ppm"], 1),
-                    }
-                    for s in sectors_data
-                ],
-                "primary_signal": primary_clean,
-                "secondary_candidates": [],
-                "script_sha256": sha256((ROOT / "scripts/vet_candidate.py").read_bytes()).hexdigest(),
+                "tmag": star["tmag"],
+                "teff_k": star["teff_k"],
+                "rad_rsun": star["rad_rsun"],
+                "dist_pc": star["dist_pc"],
+                "sectors": [s["sector"] for s in sectors_data],
+                "best_period_d": eph["period_d"],
+                "t0_btjd": eph["t0_btjd"],
+                "weighted_dip_ppm": eph["weighted_dip_ppm"],
+                "inferred_rp_rearth": eph["inferred_rp_rearth"],
+                "combined_bls_snr": eph["combined_bls_snr"],
+                "loeo_min_z": gates["gate4_leave_one_epoch_out"]["min_holdout_z_sigma"],
+                "loeo_mean_z": gates["gate4_leave_one_epoch_out"]["mean_holdout_z_sigma"],
+                "gates_passed": n_passed,
+                "failed_gates": failed_gates,
+                "verdict": verdict,
             }
-            (out_dir / "certificate.json").write_text(json.dumps(cert, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-            (out_dir / "REPORT.md").write_text(generate_markdown_report(cert), encoding="utf-8")
+            append_scan_log(log_entry)
+            results.append(log_entry)
+            print(
+                f"  -> {verdict} ({n_passed}/10 gates) | P={eph['period_d']:.6f} d | "
+                f"dip={eph['weighted_dip_ppm']:.0f} ppm (Rp={eph['inferred_rp_rearth']:.2f} R⊕) | "
+                f"SNR={eph['combined_bls_snr']:.2f} | LOEO mean Z={gates['gate4_leave_one_epoch_out']['mean_holdout_z_sigma']:.2f}σ | "
+                f"failed={failed_gates}"
+            )
+
+            # Save full dossier if it passes all 10 gates or is a high-priority watchlist target
+            if verdict in ("CANDIDATE_PASS_ALL_10", "WATCHLIST_8_PLUS_GATES"):
+                out_dir = ROOT / f"candidates/TIC-{tic_id}"
+                out_dir.mkdir(parents=True, exist_ok=True)
+                render_diagnostic_plot(star, eval_res, out_dir / "diagnostics.png")
+                primary_clean = {k: v for k, v in eval_res.items() if k != "_arrays"}
+                cert = {
+                    "schema_version": 1,
+                    "tic_id": tic_id,
+                    "status": verdict.lower(),
+                    "generated_utc": log_entry["scanned_utc"],
+                    "stellar_parameters": star,
+                    "sectors_used": [
+                        {
+                            "sector": s["sector"],
+                            "pipeline": s["pipeline"],
+                            "exptime_s": s["exptime_s"],
+                            "uri": s["uri"],
+                            "flux_col": s["flux_col"],
+                            "sha256": s["sha256"],
+                            "n_points": s["n_points"],
+                            "mad_ppm": round(s["mad_ppm"], 1),
+                        }
+                        for s in sectors_data
+                    ],
+                    "primary_signal": primary_clean,
+                    "secondary_candidates": [],
+                    "script_sha256": sha256((ROOT / "scripts/vet_candidate.py").read_bytes()).hexdigest(),
+                }
+                (out_dir / "certificate.json").write_text(json.dumps(cert, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+                (out_dir / "REPORT.md").write_text(generate_markdown_report(cert), encoding="utf-8")
+
+        cur_page += 1
 
     return results
 

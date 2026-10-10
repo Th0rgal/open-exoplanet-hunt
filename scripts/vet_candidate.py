@@ -184,6 +184,10 @@ def download_and_load_sector(tic_id: int, prod: dict, window_days: float = 0.75)
             cy = np.full(len(t), np.nan)
 
     mask = np.isfinite(t) & np.isfinite(f_raw) & (q == 0)
+    if np.sum(mask) < 50:
+        mask = np.isfinite(t) & np.isfinite(f_raw)
+    if np.sum(mask) < 50:
+        raise ValueError(f"Sector {sec} has fewer than 50 valid cadences")
     t, f_raw, f_sap, cx, cy = t[mask], f_raw[mask], f_sap[mask], cx[mask], cy[mask]
     order = np.argsort(t)
     t, f_raw, f_sap, cx, cy = t[order], f_raw[order], f_sap[order], cx[order], cy[order]
@@ -317,14 +321,37 @@ def evaluate_signal_from_arrays(
                     break
 
         # Stage 2: Multi-year phase-locking fine BLS around each candidate period
+        # Rank candidates by multi-sector coherence (min per-sector Z) so single-sector glitches never eclipse real planets
         best_res = None
-        best_peak = -1.0
+        best_score = (-1, -1, -1.0)
         for p0 in top_periods:
             pg = np.linspace(max(period_min, p0 * 0.997), min(period_max, p0 * 1.003), 4000)
             r_sub = bls_all.power(pg, d_coarse, objective="snr")
-            pk = float(np.nanmax(r_sub.power))
-            if pk > best_peak:
-                best_peak = pk
+            idx_sub = int(np.nanargmax(r_sub.power))
+            pk = float(r_sub.power[idx_sub])
+            p_sub = float(r_sub.period[idx_sub])
+            t0_sub = float(r_sub.transit_time[idx_sub])
+            dur_sub = float(r_sub.duration[idx_sub])
+            sec_zs = []
+            for s in sec_list:
+                ts, fs, es = s["t"], s["f"], s["e"]
+                ws = 1.0 / (es ** 2)
+                phs = ((ts - t0_sub + 0.5 * p_sub) % p_sub) - 0.5 * p_sub
+                ins = np.abs(phs) <= 0.5 * dur_sub
+                outs = (np.abs(phs) > 1.5 * dur_sub) & (np.abs(phs) < 4.0 * dur_sub)
+                if np.sum(ins) >= 2 and np.sum(outs) >= 4:
+                    ds = float((np.sum(ws[outs] * fs[outs]) / np.sum(ws[outs]) - np.sum(ws[ins] * fs[ins]) / np.sum(ws[ins])) * 1e6)
+                    errs = float(math.sqrt(1.0 / np.sum(ws[ins]) + 1.0 / np.sum(ws[outs])) * 1e6)
+                    sec_zs.append(ds / errs)
+                else:
+                    sec_zs.append(0.0)
+            min_sz = min(sec_zs) if sec_zs else 0.0
+            mean_sz = float(np.mean(sec_zs)) if sec_zs else 0.0
+            tier1 = int(min_sz >= 1.8 and mean_sz >= 3.2 and pk >= 7.8)
+            tier2 = int(min_sz >= 1.0 and mean_sz >= 2.2 and pk >= 7.0)
+            score = (tier1, tier2, pk)
+            if score > best_score:
+                best_score = score
                 best_res = r_sub
         res = best_res
 
