@@ -491,7 +491,7 @@ def evaluate_signal_from_arrays(
         sec_snr = sec_dip / sec_err
     else:
         sec_dip, sec_err, sec_snr = 0.0, 999.0, 0.0
-    gate6_pass = (abs(sec_snr) < 2.5) or (abs(sec_dip) < 0.30 * dip_ppm and sec_snr > -3.0)
+    gate6_pass = abs(sec_snr) < 2.5
 
     # Gate 7: Physical radius & circular transit duration plausibility
     r_star = tic_meta["rad_rsun"]
@@ -518,7 +518,12 @@ def evaluate_signal_from_arrays(
     gate8_pass = (shift_sigma < 3.0) and (shift_arcsec < 2.5)
 
     # Gate 9: Per-transit coherence & jackknife stability
-    gate9_pass = (pos_transit_fraction >= 0.70) and (jackknife_snr >= 6.5)
+    median_tr_dip_ppm = float(np.median([tr["dip_ppm"] for tr in per_transit])) if per_transit else 0.0
+    gate9_pass = (
+        (pos_transit_fraction >= 0.70)
+        and (jackknife_snr >= 6.5)
+        and (median_tr_dip_ppm >= 0.55 * dip_ppm)
+    )
 
     # Gate 10: Out-of-transit sinusoidal modulation guard (starspot & sub-harmonic check)
     # Fit sin/cos at P, 2P, P/2, P/3 on out-of-transit SAP flux
@@ -532,7 +537,7 @@ def evaluate_signal_from_arrays(
         coeffs, _, _, _ = np.linalg.lstsq(design, f_oot, rcond=None)
         amp_ppm = float(math.hypot(coeffs[0], coeffs[1]) * 1e6)
         max_harm_amp_ppm = max(max_harm_amp_ppm, amp_ppm)
-    # Compare on detrended out-of-transit flux across fundamental and rational sub-harmonics
+    # Compare on detrended out-of-transit flux across fundamental, rational sub-harmonics, and joint 4-harmonic series
     f_det_oot = f_all[oot_mask] - 1.0
     det_sin_amp_ppm = 0.0
     for mult_d in (0.20, 0.25, 1.0 / 3.0, 0.40, 0.50, 2.0 / 3.0, 1.0):
@@ -540,6 +545,21 @@ def evaluate_signal_from_arrays(
         design1 = np.column_stack([np.sin(omega1 * t_oot), np.cos(omega1 * t_oot), np.ones(len(t_oot))])
         c_det, _, _, _ = np.linalg.lstsq(design1, f_det_oot, rcond=None)
         det_sin_amp_ppm = max(det_sin_amp_ppm, float(math.hypot(c_det[0], c_det[1]) * 1e6))
+    if len(t_oot) >= 20:
+        cols_4h = [np.ones(len(t_oot))]
+        for k_h in (1, 2, 3, 4):
+            omega_k = 2.0 * math.pi * k_h / P
+            cols_4h.append(np.sin(omega_k * t_oot))
+            cols_4h.append(np.cos(omega_k * t_oot))
+        beta_4h, _, _, _ = np.linalg.lstsq(np.column_stack(cols_4h), f_det_oot, rcond=None)
+        ph_grid = np.linspace(0.75 * dur / P, 1.0 - 0.75 * dur / P, 400)
+        t_grid = T0 + ph_grid * P
+        y_grid = np.zeros_like(t_grid)
+        for k_h in (1, 2, 3, 4):
+            omega_k = 2.0 * math.pi * k_h / P
+            y_grid += beta_4h[2 * k_h - 1] * np.sin(omega_k * t_grid) + beta_4h[2 * k_h] * np.cos(omega_k * t_grid)
+        joint_4h_amp_ppm = 0.5 * float(np.max(y_grid) - np.min(y_grid)) * 1e6
+        det_sin_amp_ppm = max(det_sin_amp_ppm, joint_4h_amp_ppm)
     gate10_pass = (det_sin_amp_ppm < 0.32 * dip_ppm) and (max_harm_amp_ppm < 3.5 * dip_ppm)
 
     gates = {

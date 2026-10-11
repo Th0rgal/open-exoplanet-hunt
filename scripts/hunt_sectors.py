@@ -164,6 +164,7 @@ def run_hunt(
                     except Exception as sec_exc:
                         print(f"  [skip-sector] TIC {tic_id} s{p['sector']}: {sec_exc}")
                 if len(sectors_data) < min_sectors:
+                    scanned.add(tic_id)
                     continue
                 eval_res = evaluate_signal_from_arrays(
                     star,
@@ -188,6 +189,7 @@ def run_hunt(
                 "WATCHLIST_8_PLUS_GATES"
                 if (
                     n_passed >= 9
+                    and gates["gate4_leave_one_epoch_out"]["min_holdout_z_sigma"] >= 1.5
                     and gates["gate4_leave_one_epoch_out"]["mean_holdout_z_sigma"] >= 3.5
                     and gates["gate5_odd_even_consistency"]["diff_sigma"] < 4.0
                     and abs(gates["gate6_secondary_eclipse_null"]["secondary_snr"]) < 4.0
