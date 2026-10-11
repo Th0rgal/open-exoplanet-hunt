@@ -15,11 +15,11 @@ uv pip install --python .venv/bin/python astropy numpy scipy matplotlib requests
 # 1. Verify existing catalog index & candidate certificates
 make verify
 
-# 2. Run the 7 positive & negative adversarial falsification tests
+# 2. Run the 10 positive & negative adversarial falsification tests
 make test
 
 # 3. Scan a new batch of unreported multi-sector TESS K/M dwarfs
-.venv/bin/python -B scripts/hunt_sectors.py --max-targets 10 --min-sectors 3 --page 2
+.venv/bin/python -B scripts/hunt_sectors.py --max-targets 10 --min-sectors 3 --page 7
 ```
 
 ---

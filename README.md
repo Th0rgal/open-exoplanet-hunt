@@ -64,8 +64,8 @@ Every candidate submitted to [`candidates/`](candidates/) is audited by [`script
 | **6** | `gate6_secondary_eclipse_null` | Self-luminous companions & phase-$0.5$ sub-harmonic crests | Phase $0.5 P$ anomaly has $\|\text{SNR}\| < 2.5\,\sigma$ (both dips and upward crests) |
 | **7** | `gate7_physical_plausibility` | Unphysical stellar-sized dips or grazing geometries | $0.4\,R_\oplus \le R_p \le 18.0\,R_\oplus$ and $0.20 \le T_{14} / T_{14,\text{circ}}(b=0) \le 2.20$ |
 | **8** | `gate8_centroid_stability` | Background Eclipsing Binaries (BEBs) on nearby pixels | In-transit vs. out-of-transit centroid shift $< 3.0\,\sigma$ and $< 2.5''$ |
-| **9** | `gate9_per_transit_coherence` | Single-outlier glitches or data-gap edges | $\ge 70\%$ of individual transits have $\Delta F_i > 0$, and **Jackknife SNR** (dropping strongest transit) $\ge 6.5\,\sigma$ |
-| **10** | `gate10_rotational_modulation_guard` | Starspot rotational modulation & $2:5 / 1:2$ sub-harmonics | Out-of-transit sinusoidal amplitude at $P, P/2, 0.4P$ is $< 32\%$ of transit depth |
+| **9** | `gate9_per_transit_coherence` | Single- or double-outlier glitches & data-gap edges | $\ge 70\%$ of individual transits have $\Delta F_i > 0$, **Jackknife SNR** $\ge 6.5\,\sigma$, and median transit depth $\ge 55\%$ of weighted depth |
+| **10** | `gate10_rotational_modulation_guard` | Starspot rotational modulation, rational sub-harmonics & multi-harmonic spot profiles | Out-of-transit detrended amplitude across $P, \frac{2}{3}P, \frac{1}{2}P, \frac{2}{5}P, \frac{1}{3}P, \frac{1}{4}P, \frac{1}{5}P$ & joint 4-harmonic Fourier profile $< 32\%$ of dip, and raw SAP harmonic $< 3.5\times$ dip |
 
 ---
 
@@ -90,7 +90,7 @@ make test
 # Automatically queries MAST TIC, filters out all 15,025 known TOI/CTOI/planet stars
 # and all previously scanned targets, downloads multi-epoch FITS light curves,
 # runs two-stage per-sector + multi-year phase-locking BLS, and applies all 10 gates:
-.venv/bin/python -B scripts/hunt_sectors.py --max-targets 10 --min-sectors 3 --page 2
+.venv/bin/python -B scripts/hunt_sectors.py --max-targets 10 --min-sectors 3 --page 7
 ```
 
 ### 4. Deep-Dive Vet a Specific Star (`TIC ID`)

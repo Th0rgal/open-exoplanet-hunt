@@ -142,6 +142,40 @@ class TestAdversarialVettingGates(unittest.TestCase):
         self.assertFalse(res["gates"]["gate10_rotational_modulation_guard"]["pass"])
         self.assertFalse(res["all_gates_passed"])
 
+    def test_negative_control_multi_harmonic_spot_rejected_by_gate10(self) -> None:
+        meta, secs = make_synthetic_sectors(odd_depth=450e-6, even_depth=450e-6)
+        p_orb = 3.1828
+        for s in secs:
+            phi = 2.0 * np.pi * (s["t"] - 1468.42) / p_orb
+            # Each individual harmonic (k=1..4) has 95 ppm (< 0.32 * 450 ppm = 144 ppm),
+            # but they constructively interfere at phase 0.25 to create a > 250 ppm spot bump.
+            bump = (
+                95e-6 * np.sin(phi)
+                - 95e-6 * np.cos(2.0 * phi)
+                - 95e-6 * np.sin(3.0 * phi)
+                + 95e-6 * np.cos(4.0 * phi)
+            )
+            s["f"] = s["f"] + bump
+        res = evaluate_signal_from_arrays(meta, secs, target_period=p_orb)
+        self.assertFalse(res["gates"]["gate10_rotational_modulation_guard"]["pass"])
+        self.assertFalse(res["all_gates_passed"])
+
+    def test_negative_control_two_glitch_outliers_rejected_by_gate9(self) -> None:
+        meta, secs = make_synthetic_sectors(odd_depth=120e-6, even_depth=120e-6)
+        p_orb = 3.1828
+        t0 = 1468.42
+        # Inject two massive 4500 ppm single-transit glitches in the last sector
+        s_last = secs[2]
+        epoch_num = np.round((s_last["t"] - t0) / p_orb).astype(int)
+        ph = (s_last["t"] - t0) - epoch_num * p_orb
+        unique_eps = sorted(set(int(x) for x in epoch_num[np.abs(ph) <= 0.036]))
+        for ep_glitch in unique_eps[:2]:
+            m_gl = (epoch_num == ep_glitch) & (np.abs(ph) <= 0.036)
+            s_last["f"][m_gl] -= 4500e-6
+        res = evaluate_signal_from_arrays(meta, secs, target_period=p_orb)
+        self.assertFalse(res["gates"]["gate9_per_transit_coherence"]["pass"])
+        self.assertFalse(res["all_gates_passed"])
+
     def test_optimized_python_rejected_on_all_entrypoints(self) -> None:
         for script in ("sync_catalogs.py", "vet_candidate.py", "hunt_sectors.py", "verify_all.py"):
             proc = subprocess.run(
