@@ -107,6 +107,7 @@ make test
 ## 📚 Documentation & Landscape Index
 
 - **[`docs/EXISTING_DISCOVERIES_INDEX.md`](docs/EXISTING_DISCOVERIES_INDEX.md)**: Complete technical review of Pavel Rabtsevich's `TIC 4206066` discovery, plus a comprehensive survey and index of `RAVEN` (Warwick), `ExoMiner++` (NASA Ames), `T16` (Princeton), `Planet Hunters TESS` (Zooniverse / Nora Eisner), `SHERLOCK` (Pozuelos et al.), `TRICERATOPS`, and independent open-source GitHub pipelines.
+- **[`docs/PREREGISTERED_EPHEMERIDES_2026.md`](docs/PREREGISTERED_EPHEMERIDES_2026.md)**: Preregistered Autumn 2026 (Oct 31 – Nov 27, 2026 / TESS Sector 110 window) mid-transit epochs ($T_c$ in BTJD and UTC), ingress/egress timestamps, and prospective falsification criteria for all 8 candidate and watchlist dossiers.
 - **[`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md)**: Detailed collaborative research plan, mathematical formulation of two-stage cross-sector coincidence + multi-year phase-locking, and preregistration protocol.
 - **[`CONTRIBUTING.md`](CONTRIBUTING.md)**: Workflow and review rubric for human researchers and autonomous coding agents.
 
