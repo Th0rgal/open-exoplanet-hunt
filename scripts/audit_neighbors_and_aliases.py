@@ -262,6 +262,7 @@ def main() -> None:
         4206066: "StKM 1-561 (K-dwarf, 35.6 pc)",
         69912980: "G 86-28 (M3.0V, 12.4 pc)",
         63349323: "PM J02019+3413 (M0.5Ve, 54.0 pc)",
+        119487103: "G 214-12 (M3.0V, 23.1 pc)",
         120844941: "TYC 2898-1488-1 (K7V, 47.0 pc)",
         125757128: "HG 8-41 (K5V, 35.8 pc)",
         252907497: "G 192-59 (M2.0V, 33.2 pc)",
@@ -273,7 +274,7 @@ def main() -> None:
     md_lines = [
         "# Gaia DR3 / TIC Neighbor Blend & Period-Alias Falsification Audit",
         "",
-        "This document provides the quantitative results of two critical astrophysical falsification tests across all 8 candidate and watchlist dossiers in `open-exoplanet-hunt` (addressing [Issue #2](https://github.com/Th0rgal/open-exoplanet-hunt/issues/2)):",
+        f"This document provides the quantitative results of two critical astrophysical falsification tests across all {len(cert_paths)} candidate and watchlist dossiers in `open-exoplanet-hunt` (addressing [Issue #2](https://github.com/Th0rgal/open-exoplanet-hunt/issues/2)):",
         "",
         "1. **Gaia DR3 / MAST TIC Neighbor Dilution & Centroid-Torque Exclusion ($r \\le 120''$)**:",
         "   - Queries every known star in the TESS Input Catalog / Gaia DR3 within $120''$ ($\\sim 5.7$ TESS pixels) of each host star.",
