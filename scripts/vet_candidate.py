@@ -139,7 +139,10 @@ def discover_sector_products(tic_id: int) -> list[dict]:
     selected = []
     for sec in sorted(by_sector):
         candidates = sorted(by_sector[sec], key=lambda x: (x["priority"], x["exptime_s"]))
-        selected.append(candidates[0])
+        best = dict(candidates[0])
+        if len(candidates) > 1:
+            best["fallbacks"] = candidates[1:]
+        selected.append(best)
     return selected
 
 
@@ -172,16 +175,18 @@ def download_and_load_sector(tic_id: int, prod: dict, window_days: float = 0.75)
         cols = d.columns.names
         t = np.asarray(d["TIME"], dtype=float)
         q = np.asarray(d["QUALITY"], dtype=int) if "QUALITY" in cols else np.zeros(len(t), dtype=int)
-        if "PDCSAP_FLUX" in cols:
-            flux_col = "PDCSAP_FLUX"
-        elif "DET_FLUX" in cols:
-            flux_col = "DET_FLUX"
-        elif "KSPSAP_FLUX" in cols:
-            flux_col = "KSPSAP_FLUX"
-        else:
-            flux_col = "SAP_FLUX"
-        f_raw = np.asarray(d[flux_col], dtype=float)
+        flux_col = "SAP_FLUX"
+        f_raw = np.full(len(t), np.nan)
+        for cand_col in ("PDCSAP_FLUX", "DET_FLUX", "KSPSAP_FLUX", "SAP_FLUX"):
+            if cand_col in cols:
+                cand_arr = np.asarray(d[cand_col], dtype=float)
+                if np.sum(np.isfinite(cand_arr)) >= 50:
+                    flux_col = cand_col
+                    f_raw = cand_arr
+                    break
         f_sap = np.asarray(d["SAP_FLUX"], dtype=float) if "SAP_FLUX" in cols else f_raw.copy()
+        if np.sum(np.isfinite(f_sap)) < 50:
+            f_sap = f_raw.copy()
 
         if "MOM_CENTR1" in cols and "MOM_CENTR2" in cols:
             cx = np.asarray(d["MOM_CENTR1"], dtype=float)
@@ -197,6 +202,11 @@ def download_and_load_sector(tic_id: int, prod: dict, window_days: float = 0.75)
     if np.sum(mask) < 50:
         mask = np.isfinite(t) & np.isfinite(f_raw)
     if np.sum(mask) < 50:
+        for fb in prod.get("fallbacks", []):
+            try:
+                return download_and_load_sector(tic_id, fb, window_days=window_days)
+            except Exception:
+                continue
         raise ValueError(f"Sector {sec} has fewer than 50 valid cadences")
     t, f_raw, f_sap, cx, cy = t[mask], f_raw[mask], f_sap[mask], cx[mask], cy[mask]
     order = np.argsort(t)
