@@ -177,7 +177,7 @@ class TestAdversarialVettingGates(unittest.TestCase):
         self.assertFalse(res["all_gates_passed"])
 
     def test_optimized_python_rejected_on_all_entrypoints(self) -> None:
-        for script in ("sync_catalogs.py", "vet_candidate.py", "hunt_sectors.py", "verify_all.py"):
+        for script in ("sync_catalogs.py", "vet_candidate.py", "hunt_sectors.py", "verify_all.py", "audit_neighbors_and_aliases.py"):
             proc = subprocess.run(
                 [sys.executable, "-O", str(ROOT / "scripts" / script), "--help"],
                 capture_output=True,
