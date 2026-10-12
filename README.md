@@ -29,7 +29,7 @@ This repository turns that search into an **open, git-native, machine-verified c
 3. **Adversarial Negative-Control Test Suite ([`tests/test_vetting_controls.py`](tests/test_vetting_controls.py))**:
    - We break our tests on purpose: synthetic odd/even eclipsing binaries, secondary-eclipse binaries, single-sector glitches, centroid-shifted background binaries, and rotational variables are tested in CI on every PR to guarantee the falsification gates never degrade into rubber stamps.
 4. **Shared Target Registry ([`registry/scanned_targets.jsonl`](registry/scanned_targets.jsonl) & [`registry/leaderboard.json`](registry/leaderboard.json))**:
-   - Tracks **`700+` multi-sector nearby K/M dwarfs** already audited across the community so contributors and autonomous agents coordinate without duplicating work.
+   - Tracks **`800+` multi-sector nearby K/M dwarfs** already audited across the community so contributors and autonomous agents coordinate without duplicating work.
 
 ---
 
@@ -90,7 +90,7 @@ make test
 # Automatically queries MAST TIC, filters out all 15,025 known TOI/CTOI/planet stars
 # and all previously scanned targets, downloads multi-epoch FITS light curves,
 # runs two-stage per-sector + multi-year phase-locking BLS, and applies all 10 gates:
-.venv/bin/python -B scripts/hunt_sectors.py --max-targets 10 --min-sectors 3 --page 10
+.venv/bin/python -B scripts/hunt_sectors.py --max-targets 10 --min-sectors 3 --page 12
 ```
 
 ### 4. Deep-Dive Vet a Specific Star (`TIC ID`)
