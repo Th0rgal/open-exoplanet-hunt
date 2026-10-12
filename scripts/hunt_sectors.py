@@ -150,7 +150,8 @@ def run_hunt(
                 continue
             found_on_page += 1
 
-            # Limit to at most 6 well-separated or highest-priority sectors for fast multi-year baseline
+            all_prods = list(prods)
+            # Limit initial fast screen to at most 6 well-separated sectors; expand to all sectors if promising
             if len(prods) > 6:
                 idxs = [0, 1, len(prods) // 2 - 1, len(prods) // 2, len(prods) - 2, len(prods) - 1]
                 prods = [prods[i] for i in sorted(set(idxs))]
@@ -178,34 +179,59 @@ def run_hunt(
                 print(f"  [error] TIC {tic_id}: {exc}")
                 continue
 
+            def _compute_verdict(res_dict: dict) -> tuple[str, int, list[str]]:
+                e_d = res_dict["ephemeris"]
+                g_d = res_dict["gates"]
+                n_p = sum(1 for g in g_d.values() if g["pass"])
+                f_g = [k for k, g in g_d.items() if not g["pass"]]
+                v_str = "CANDIDATE_PASS_ALL_10" if res_dict["all_gates_passed"] else (
+                    "WATCHLIST_8_PLUS_GATES"
+                    if (
+                        n_p >= 9
+                        and g_d["gate4_leave_one_epoch_out"]["min_holdout_z_sigma"] >= 1.5
+                        and g_d["gate4_leave_one_epoch_out"]["mean_holdout_z_sigma"] >= 3.5
+                        and g_d["gate5_odd_even_consistency"]["diff_sigma"] < 4.0
+                        and abs(g_d["gate6_secondary_eclipse_null"]["secondary_snr"]) < 4.0
+                        and g_d["gate7_physical_plausibility"]["pass"]
+                        and (
+                            g_d["gate9_per_transit_coherence"]["pass"]
+                            or (
+                                g_d["gate9_per_transit_coherence"]["positive_fraction"] >= 0.80
+                                and g_d["gate9_per_transit_coherence"]["jackknife_snr"] >= 6.0
+                            )
+                        )
+                        and g_d["gate10_rotational_modulation_guard"]["pass"]
+                        and e_d["combined_bls_snr"] >= 7.5
+                    )
+                    else "REJECTED_BY_FALSIFICATION"
+                )
+                return v_str, n_p, f_g
+
+            verdict, n_passed, failed_gates = _compute_verdict(eval_res)
+            if verdict in ("CANDIDATE_PASS_ALL_10", "WATCHLIST_8_PLUS_GATES") and len(all_prods) > len(prods):
+                loaded_sec_nums = {s["sector"] for s in sectors_data}
+                extra_prods = [p for p in all_prods if p["sector"] not in loaded_sec_nums]
+                for p in extra_prods:
+                    try:
+                        sectors_data.append(download_and_load_sector(tic_id, p))
+                    except Exception as sec_exc:
+                        print(f"  [skip-sector] TIC {tic_id} s{p['sector']}: {sec_exc}")
+                sectors_data.sort(key=lambda s: s["sector"])
+                print(f"  [full-sector-audit] Re-evaluating TIC {tic_id} across all {len(sectors_data)} sectors {[s['sector'] for s in sectors_data]}...")
+                eval_res = evaluate_signal_from_arrays(
+                    star,
+                    sectors_data,
+                    target_period=None,
+                    period_min=1.1,
+                    period_max=15.0,
+                    allow_known=False,
+                )
+                verdict, n_passed, failed_gates = _compute_verdict(eval_res)
+
             processed += 1
             scanned.add(tic_id)
             eph = eval_res["ephemeris"]
             gates = eval_res["gates"]
-            n_passed = sum(1 for g in gates.values() if g["pass"])
-            failed_gates = [k for k, g in gates.items() if not g["pass"]]
-
-            verdict = "CANDIDATE_PASS_ALL_10" if eval_res["all_gates_passed"] else (
-                "WATCHLIST_8_PLUS_GATES"
-                if (
-                    n_passed >= 9
-                    and gates["gate4_leave_one_epoch_out"]["min_holdout_z_sigma"] >= 1.5
-                    and gates["gate4_leave_one_epoch_out"]["mean_holdout_z_sigma"] >= 3.5
-                    and gates["gate5_odd_even_consistency"]["diff_sigma"] < 4.0
-                    and abs(gates["gate6_secondary_eclipse_null"]["secondary_snr"]) < 4.0
-                    and gates["gate7_physical_plausibility"]["pass"]
-                    and (
-                        gates["gate9_per_transit_coherence"]["pass"]
-                        or (
-                            gates["gate9_per_transit_coherence"]["positive_fraction"] >= 0.80
-                            and gates["gate9_per_transit_coherence"]["jackknife_snr"] >= 6.0
-                        )
-                    )
-                    and gates["gate10_rotational_modulation_guard"]["pass"]
-                    and eph["combined_bls_snr"] >= 7.5
-                )
-                else "REJECTED_BY_FALSIFICATION"
-            )
 
             log_entry = {
                 "scanned_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
