@@ -29,7 +29,7 @@ This repository turns that search into an **open, git-native, machine-verified c
 3. **Adversarial Negative-Control Test Suite ([`tests/test_vetting_controls.py`](tests/test_vetting_controls.py))**:
    - We break our tests on purpose: synthetic odd/even eclipsing binaries, secondary-eclipse binaries, single-sector glitches, centroid-shifted background binaries, and rotational variables are tested in CI on every PR to guarantee the falsification gates never degrade into rubber stamps.
 4. **Shared Target Registry ([`registry/scanned_targets.jsonl`](registry/scanned_targets.jsonl) & [`registry/leaderboard.json`](registry/leaderboard.json))**:
-    - Tracks **`1,220+` multi-sector nearby K/M dwarfs** already audited across the community so contributors and autonomous agents coordinate without duplicating work.
+    - Tracks **`1,230+` multi-sector nearby K/M dwarfs** already audited across the community so contributors and autonomous agents coordinate without duplicating work.
 
 ---
 
