@@ -1,6 +1,6 @@
 # Gaia DR3 / TIC Neighbor Blend & Period-Alias Falsification Audit
 
-This document provides the quantitative results of two critical astrophysical falsification tests across all 9 candidate and watchlist dossiers in `open-exoplanet-hunt` (addressing [Issue #2](https://github.com/Th0rgal/open-exoplanet-hunt/issues/2)):
+This document provides the quantitative results of two critical astrophysical falsification tests across all 10 candidate and watchlist dossiers in `open-exoplanet-hunt` (addressing [Issue #2](https://github.com/Th0rgal/open-exoplanet-hunt/issues/2)):
 
 1. **Gaia DR3 / MAST TIC Neighbor Dilution & Centroid-Torque Exclusion ($r \le 120''$)**:
    - Queries every known star in the TESS Input Catalog / Gaia DR3 within $120''$ ($\sim 5.7$ TESS pixels) of each host star.
@@ -15,6 +15,7 @@ This document provides the quantitative results of two critical astrophysical fa
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | [`TIC 4206066`](../candidates/TIC-4206066/REPORT.md) | StKM 1-561 (K-dwarf, 35.6 pc) | `448.9` | `0.010″` | `41` | `35` | `6` | **`0`** | `1P = 3.18278 d` (`10/10` gates, O/E `0.58σ`) |
 | [`TIC 69912980`](../candidates/TIC-69912980/REPORT.md) | G 86-28 (M3.0V, 12.4 pc) | `296.1` | `0.009″` | `114` | `89` | `17` | **`8`** | `1P = 2.19656 d` (`10/10` gates, O/E `1.78σ`) |
+| [`TIC 264151965`](../candidates/TIC-264151965/REPORT.md) | L 198-93 (M3.0V, 21.2 pc) | `1245.9` | `0.007″` | `715` | `635` | `80` | **`0`** | `1P = 4.81580 d` (`10/10` gates, O/E `0.41σ`) |
 | [`TIC 63349323`](../candidates/TIC-63349323/REPORT.md) | PM J02019+3413 (M0.5Ve, 54.0 pc) | `461.7` | `0.012″` | `22` | `18` | `3` | **`1`** | `1P = 4.47226 d` (`9/10` gates, O/E `0.21σ`) |
 | [`TIC 119487103`](../candidates/TIC-119487103/REPORT.md) | G 214-12 (M3.0V, 23.1 pc) | `309.8` | `0.009″` | `111` | `91` | `18` | **`2`** | `1P = 5.66920 d` (`9/10` gates, O/E `0.90σ`) |
 | [`TIC 120844941`](../candidates/TIC-120844941/REPORT.md) | TYC 2898-1488-1 (K7V, 47.0 pc) | `532.3` | `0.012″` | `208` | `179` | `24` | **`5`** | `1P = 5.20697 d` (`9/10` gates, O/E `0.99σ`) |
@@ -80,6 +81,34 @@ This document provides the quantitative results of two critical astrophysical fa
 | **0.5 P (Half Period)** | `1.100380` | `109.7 ± 20.4` | `0.32` | `6.69σ` | `-0.17σ` | `+1.12σ` | `1.36σ` | `+1.99σ` | `5/10` |
 | **1.5 P (3:2 Resonance/Alias)** | `3.295742` | `187.5 ± 41.0` | `0.41` | `6.28σ` | `-1.55σ` | `+0.05σ` | `1.73σ` | `-2.45σ` | `6/10` |
 | **0.667 P (2:3 Resonance/Alias)** | `1.467795` | `103.0 ± 19.2` | `0.31` | `4.92σ` | `+1.51σ` | `+2.34σ` | `1.53σ` | `+0.66σ` | `5/10` |
+
+### [`TIC 264151965`](../candidates/TIC-264151965/REPORT.md) — L 198-93 (M3.0V, 21.2 pc)
+
+- **Observed Transit Depth**: `1245.9 ppm` | **Observed In-Transit Centroid Shift**: `0.0018″` (`0.98σ`; $3\sigma$ upper bound: `0.0073″`)
+- **Neighbor Exclusion ($r \le 120''$)**: **715** cataloged TIC/Gaia stars within $120''$ — **635** ruled out by flux dilution, **80** ruled out by centroid torque, **0** unresolved blending stars capable of mimicking the dip.
+
+#### Brightest / Closest Cataloged Neighbors ($r \le 120''$, Top 8 by Max Diluted Depth)
+
+| Neighbor TIC | Gaia DR3 ID | Sep ($''$) | $T_{\text{mag}}$ | $\Delta T$ | Max Depth (50% EB, ppm) | Max Depth (100% Occ, ppm) | Req. Centroid Shift ($''$) | Verdict |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `TIC 290844818` | `5890960105093370880` | `39.06″` | `12.51` | `+1.56` | `91077.0` | `182154.0` | `0.0487″` | `RULED_OUT_BY_CENTROID` |
+| `TIC 290844653` | `5890959349179100544` | `50.12″` | `13.69` | `+2.74` | `25617.1` | `51234.3` | `0.0624″` | `RULED_OUT_BY_CENTROID` |
+| `TIC 290844881` | `5890960139453120768` | `63.84″` | `12.94` | `+1.98` | `23424.3` | `46848.6` | `0.0795″` | `RULED_OUT_BY_CENTROID` |
+| `TIC 264151838` | `5890936637391081728` | `35.05″` | `14.49` | `+3.54` | `18272.6` | `36545.3` | `0.0437″` | `RULED_OUT_BY_CENTROID` |
+| `TIC 264151922` | `5890936671750824320` | `72.44″` | `12.51` | `+1.56` | `17198.5` | `34397.0` | `0.0903″` | `RULED_OUT_BY_CENTROID` |
+| `TIC 290844621` | `5890935881476833280` | `57.79″` | `13.87` | `+2.92` | `15095.5` | `30191.1` | `0.0720″` | `RULED_OUT_BY_CENTROID` |
+| `TIC 264152041` | `5890936706111102720` | `37.76″` | `14.92` | `+3.96` | `12113.3` | `24226.5` | `0.0470″` | `RULED_OUT_BY_CENTROID` |
+| `TIC 264151855` | `5890936637391082624` | `42.56″` | `15.12` | `+4.17` | `9207.8` | `18415.5` | `0.0530″` | `RULED_OUT_BY_CENTROID` |
+
+#### Rational Period-Alias Evaluation ($P, 2P, P/2, 3P/2, 2P/3$)
+
+| Tested Alias | Period (d) | Depth (ppm) | $R_p$ ($R_\oplus$) | BLS SNR | LOEO Min $Z$ | LOEO Mean $Z$ | Odd/Even ($\sigma$) | Phase-0.5 Sec ($\sigma$) | Gates Passed |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **1.0 P (Certified Primary)** | `4.815804` | `1245.9 ± 75.8` | `1.20` | `17.10σ` | `+4.35σ` | `+6.48σ` | `0.41σ` | `+0.46σ` | `10/10` |
+| **2.0 P (Double Period)** | `9.631601` | `1284.7 ± 108.5` | `1.21` | `12.47σ` | `+2.44σ` | `+3.95σ` | `1.24σ` | `+10.83σ` | `9/10` |
+| **0.5 P (Half Period)** | `2.407900` | `657.4 ± 54.6` | `0.87` | `12.34σ` | `+2.31σ` | `+4.55σ` | `11.03σ` | `-1.56σ` | `9/10` |
+| **1.5 P (3:2 Resonance/Alias)** | `7.223765` | `851.1 ± 100.8` | `0.99` | `8.44σ` | `-1.29σ` | `+1.53σ` | `3.74σ` | `-0.41σ` | `8/10` |
+| **0.667 P (2:3 Resonance/Alias)** | `3.210533` | `414.3 ± 53.4` | `0.69` | `7.92σ` | `+1.10σ` | `+2.80σ` | `1.35σ` | `+6.25σ` | `6/10` |
 
 ### [`TIC 63349323`](../candidates/TIC-63349323/REPORT.md) — PM J02019+3413 (M0.5Ve, 54.0 pc)
 

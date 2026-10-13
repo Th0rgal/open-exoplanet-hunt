@@ -9,6 +9,7 @@ Every candidate and watchlist dossier in `open-exoplanet-hunt` is accompanied by
 | Target | Host Star | Disposition | $P$ (days) | $T_0$ (BTJD) | Depth (ppm) | Duration (hr) | $R_p$ ($R_\oplus$) | Transits in Window (Oct 31 – Nov 27, 2026) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | [`TIC 4206066`](../candidates/TIC-4206066/REPORT.md) | StKM 1-561 (K-dwarf, 35.6 pc) | **10/10 Benchmark** | `3.1827846` | `1468.42382` | `448.9 ± 26.9` | `1.73` | `1.50` | `9` |
+| [`TIC 264151965`](../candidates/TIC-264151965/REPORT.md) | L 198-93 (M3.0V, 21.2 pc) | **10/10 PASS** | `4.8158039` | `2336.17518` | `1245.9 ± 75.8` | `0.96` | `1.20` | `5` |
 | [`TIC 69912980`](../candidates/TIC-69912980/REPORT.md) | G 86-28 (M3.0V, 12.4 pc) | **10/10 PASS** | `2.1965600` | `1816.36994` | `296.1 ± 38.7` | `0.96` | `0.52` | `13` |
 | [`TIC 63349323`](../candidates/TIC-63349323/REPORT.md) | PM J02019+3413 (M0.5Ve, 54.0 pc) | **9/10 Watchlist** | `4.4722572` | `1791.36002` | `461.7 ± 44.6` | `3.36` | `1.43` | `6` |
 | [`TIC 119487103`](../candidates/TIC-119487103/REPORT.md) | G 214-12 (M3.0V, 23.1 pc) | **9/10 Watchlist** | `5.6691950` | `1740.40636` | `309.8 ± 40.8` | `3.36` | `0.84` | `5` |
@@ -37,6 +38,20 @@ Every candidate and watchlist dossier in `open-exoplanet-hunt` is accompanied by
 | `910` | `4364.75781` | `2026-11-20 06:11 UTC` | `4364.72176` | `4364.79385` |
 | `911` | `4367.94059` | `2026-11-23 10:34 UTC` | `4367.90455` | `4367.97663` |
 | `912` | `4371.12338` | `2026-11-26 14:57 UTC` | `4371.08733` | `4371.15942` |
+
+### [`TIC 264151965`](../candidates/TIC-264151965/REPORT.md) — L 198-93 (M3.0V, 21.2 pc) (10/10 PASS)
+
+- **Linear Ephemeris**: $T_c(E) = 2336.17518 + E \times 4.8158039\text{ BTJD}$
+- **Expected Transit Depth**: $\Delta F = 1245.9 \pm 75.8\text{ ppm}$ ($R_p \approx 1.20\,R_\oplus$), Duration $D = 0.96\text{ hr}$
+- **Archived TESS Sectors**: `[38, 65, 99, 100, 101, 102]`
+
+| Cycle $E$ | Mid-Transit $T_c$ (BTJD) | Mid-Transit (UTC, Barycentric) | Ingress $T_1$ (BTJD) | Egress $T_4$ (BTJD) |
+| :--- | :--- | :--- | :--- | :--- |
+| `418` | `4349.18121` | `2026-11-04 16:20 UTC` | `4349.16121` | `4349.20121` |
+| `419` | `4353.99701` | `2026-11-09 11:55 UTC` | `4353.97701` | `4354.01701` |
+| `420` | `4358.81282` | `2026-11-14 07:30 UTC` | `4358.79282` | `4358.83282` |
+| `421` | `4363.62862` | `2026-11-19 03:05 UTC` | `4363.60862` | `4363.64862` |
+| `422` | `4368.44443` | `2026-11-23 22:39 UTC` | `4368.42443` | `4368.46443` |
 
 ### [`TIC 69912980`](../candidates/TIC-69912980/REPORT.md) — G 86-28 (M3.0V, 12.4 pc) (10/10 PASS)
 
