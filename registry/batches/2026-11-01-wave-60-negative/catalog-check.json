@@ -1,0 +1,99 @@
+{
+  "latest_pre_submission_refresh": {
+    "collisions": {
+      "101070518": [
+        "local_coverage"
+      ],
+      "101448163": [
+        "local_coverage"
+      ],
+      "62468883": [
+        "local_coverage"
+      ],
+      "71254978": [
+        "local_coverage"
+      ]
+    },
+    "external_index_sha256": "eb0a165a1a142f03d9c08df558f2090da93b9431d27d4b6ae29471a2e7b946f2",
+    "local_registry_sha256": "88d39334d86064bcb51a296f7ed325e680d6693b234c3b9c092917d00f633135",
+    "official_source_hashes": {
+      "confirmed": "caefd88af355943484fbd81ab0e0f79924d1c58a536b0d0d50602aa8aba7f005",
+      "ctoi": "9e11710eaa5604343bef02d6d4b8b6b087f0d335c9213453345a5d2a6243d1f9",
+      "toi": "0eac437a503b4dea524f47ba0ba1e148786f8f606a9ff5656582e78dcde03222"
+    },
+    "plan_sha256": "b7f89a8866c33d3ce5da3928bef911c326075a9dc899afccf633b10e1efb777c",
+    "retrieved_utc": [
+      "2026-11-01T09:32:47.066619+00:00",
+      "2026-11-01T09:32:53.732273+00:00",
+      "2026-11-01T09:32:55.016928+00:00"
+    ],
+    "run_id": "41293435883",
+    "selected_target_collisions": {},
+    "upstream_registry": {
+      "commit": "19e5e9e8ca72c8e584fd08a92276d285ca474888",
+      "retrieved_utc": "2026-11-01T09:32:55.584638+00:00",
+      "rows": 1250,
+      "sha256": "9d4cabc381f598b8587a5039f1011f60ee4830c05166b92eff2e62b1f72213d4",
+      "url": "https://raw.githubusercontent.com/Th0rgal/open-exoplanet-hunt/19e5e9e8ca72c8e584fd08a92276d285ca474888/registry/scanned_targets.jsonl"
+    }
+  },
+  "scope": "Target-ID membership checks against indexed products. This does not replace a literature or coordinate-based novelty review.",
+  "search_time_catalog": {
+    "counts": {
+      "exofop_ctois_total": 5139,
+      "external_indexed_candidates": 4,
+      "external_indexed_projects": 7,
+      "nasa_confirmed_exoplanets_total": 6451,
+      "nasa_confirmed_with_tic": 6144,
+      "nasa_tois_total": 8151,
+      "unique_known_tics_indexed": 15027
+    },
+    "known_index_sha256": "6bd3d6fd79c985093190ea13e55797e9a05e56838090b1a66e15895651b80810",
+    "selected_targets_with_entries": [],
+    "source_receipts": [
+      {
+        "bytes": 1818654,
+        "retrieved_utc": "2026-10-28T13:55:47.404773+00:00",
+        "rows": 6451,
+        "sha256": "caefd88af355943484fbd81ab0e0f79924d1c58a536b0d0d50602aa8aba7f005",
+        "source": "confirmed",
+        "unique_tics": 4551,
+        "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name,hostname,tic_id,disc_year,discoverymethod,disc_facility,pl_orbper,pl_rade,ra,dec,sy_dist+from+pscomppars&format=json"
+      },
+      {
+        "bytes": 2300026,
+        "retrieved_utc": "2026-10-28T13:55:49.284368+00:00",
+        "rows": 8151,
+        "sha256": "0eac437a503b4dea524f47ba0ba1e148786f8f606a9ff5656582e78dcde03222",
+        "source": "toi",
+        "unique_tics": 7826,
+        "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+toi,tid,tfopwg_disp,pl_orbper,pl_tranmid,pl_trandep,pl_trandurh,pl_rade,st_tmag,st_teff,st_rad,st_dist+from+toi&format=json"
+      },
+      {
+        "bytes": 2335190,
+        "retrieved_utc": "2026-10-28T13:55:50.793753+00:00",
+        "rows": 5139,
+        "sha256": "9e11710eaa5604343bef02d6d4b8b6b087f0d335c9213453345a5d2a6243d1f9",
+        "source": "ctoi",
+        "unique_tics": 4936,
+        "url": "https://exofop.ipac.caltech.edu/tess/download_ctoi.php?sort=ctoi&output=csv"
+      }
+    ],
+    "updated_utc": "2026-10-28T13:55:51Z"
+  },
+  "upstream_registry_check": {
+    "checked_utc": "2026-11-01T09:32:55.584638+00:00",
+    "main_commit": "19e5e9e8ca72c8e584fd08a92276d285ca474888",
+    "main_registry_matches": [],
+    "open_pull_request": {
+      "excluded_overlapping_tics": [
+        "62468883",
+        "71254978",
+        "101070518",
+        "101448163"
+      ],
+      "number": 11,
+      "url": "https://github.com/Th0rgal/open-exoplanet-hunt/pull/11"
+    }
+  }
+}

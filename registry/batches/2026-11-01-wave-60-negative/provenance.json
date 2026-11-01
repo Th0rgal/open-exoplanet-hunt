@@ -1,0 +1,174 @@
+{
+  "alias_multipliers": [
+    2.0,
+    0.5,
+    1.5,
+    0.6666666666666666
+  ],
+  "catalog_subset_scope": "Target-specific entries for the sixty submitted TIC IDs only. An empty snapshot records that no selected TIC appeared in the exact search-time catalog.",
+  "controller_commit": "1a03080d80053303eec120ee4e238d7e4b90f373",
+  "dependencies": [
+    "PyYAML==6.0.3",
+    "astropy-iers-data==0.2026.10.19.0.52.1",
+    "astropy==7.1.1",
+    "certifi==2026.10.23",
+    "charset-normalizer==3.5.2",
+    "contourpy==1.4.0",
+    "cycler==0.12.1",
+    "fonttools==4.68.0",
+    "idna==3.20",
+    "kiwisolver==1.5.1",
+    "matplotlib==3.10.7",
+    "numpy==2.3.4",
+    "packaging==26.3",
+    "pillow==13.0.0",
+    "pyerfa==2.0.1.5",
+    "pyparsing==3.3.3",
+    "python-dateutil==3.0.0",
+    "requests==2.32.5",
+    "scipy==1.16.3",
+    "six==1.17.0",
+    "tzdata==2026.6",
+    "urllib3==2.8.0"
+  ],
+  "engine_source": {
+    "branch_at_execution": "hosted-batch-runner",
+    "commit": "d454c2130216de409111ef13e7a3724e7c6e25d7",
+    "raw_base": "https://raw.githubusercontent.com/mashingaan/open-exoplanet-hunt",
+    "repository": "https://github.com/mashingaan/open-exoplanet-hunt"
+  },
+  "excluded_tics_already_in_upstream_pr_11": [
+    "62468883",
+    "71254978",
+    "101070518",
+    "101448163"
+  ],
+  "final_recovery_run_id": "41292177268",
+  "known_index_sha256": "6bd3d6fd79c985093190ea13e55797e9a05e56838090b1a66e15895651b80810",
+  "partition_1_worker_run_id": "41290744942",
+  "partition_sha256": {
+    "0": "2c5ad1c527122bbb5fb57797ad75b046947c05b7461204a36916616faea84367",
+    "1": "480133c70017be6a513454a6845e5a89c0205b64e355e3d71de624fb348c70ad",
+    "2": "6220e527086528f1734551f425acadf617d95407e3d0e8318e39f52c8cfa90bd",
+    "3": "2b9d8bf0a99f93ac00d8411b4281f14479920ccbb8685edacc8778f0dbea049d",
+    "4": "2fe2a1a110650dca1c8c058e2a8e476a5d45b268a6b70b3b4c46989d00a571cc",
+    "5": "eb73a8612c4ee294e425b343f5d3c5c7be785f6312448272df0cdb3dead67776",
+    "6": "b49ab7e6d4a545ba3e1f66d5e8884a66a0ca0c18af14b65c55d9479c53278935",
+    "7": "e9e5530bb867169287c161dd46ca96d158fb7453bdd08a3c0b3df36e2bcf6c88"
+  },
+  "plan_run_id": "40700693726",
+  "refresh_run_id": "41293435883",
+  "replay_scope": "Primary evaluations and four fixed period aliases. Neighbor receipts are retained but not independently queried by replay.py.",
+  "scientific_scripts": {
+    "audit_neighbors_and_aliases.py": "b5ce318c5a54631472db0eaac7947e2db9a1c0816396acaf7bb5ac9d2dee0e65",
+    "hunt_sectors.py": "4124cc22807f86b1596a23602d10082ee5aef79787677b87272552ade7bdadb4",
+    "sync_catalogs.py": "3e16e0ebbda8fa855c14cda0b95c061f3bc791cb785397ea3e1d8e00a2756220",
+    "verify_all.py": "25337066832b629780741808e3586873facdccc77d7f09e314bc927c66d4c69d",
+    "vet_candidate.py": "8e7f3e3a903247c73f3b872bd2d9d1b578f00db34f17323c10712b8c6762911d"
+  },
+  "scope": "Sixty non-overlapping completed targets selected from one frozen 64-target wave. Four targets are excluded from this public batch because open upstream PR 11 already records them.",
+  "selection_rule": {
+    "alias_multipliers": [
+      2.0,
+      0.5,
+      1.5,
+      0.6666666666666666
+    ],
+    "failed_target_policy": "Stop incomplete and resume the same frozen target, never substitute",
+    "maximum_discovered_sectors": 12,
+    "maximum_metadata_probes": 96,
+    "maximum_planned_targets": 8,
+    "minimum_sectors": 3,
+    "period_range_days": [
+      1.1,
+      15.0
+    ],
+    "random_seed": null,
+    "randomness": "No stochastic search step is configured",
+    "sector_policy": "Unchanged upstream six-sector screen and conditional full-sector expansion",
+    "thresholds": "Unchanged upstream scientific scripts, identified by SHA-256"
+  },
+  "source_repository": "https://github.com/mashingaan/tess-discovery",
+  "source_run_id": "40703248109",
+  "source_run_visibility": "Private hosted source runs. Public MAST products and hashes are retained in every evaluation receipt. The source run artifacts are not required to execute this public replay.",
+  "target_catalog_sha256": "c48af1e2b469cf8c869097540babee7b3e9810571595fb4a312b69e12a372a8a",
+  "unique_targets_by_partition": {
+    "0": [
+      "61167001",
+      "61179982",
+      "62382663",
+      "64578043",
+      "66083042",
+      "66765158",
+      "67390812",
+      "70450397"
+    ],
+    "1": [
+      "72619206",
+      "72702616",
+      "77725030",
+      "80251469",
+      "91516252",
+      "92360425",
+      "92360426"
+    ],
+    "2": [
+      "97287569",
+      "98524091",
+      "99137375",
+      "100764698",
+      "101631520",
+      "108468356",
+      "61117121",
+      "61727113"
+    ],
+    "3": [
+      "70665974",
+      "71196295",
+      "73407282",
+      "77041175",
+      "77110476",
+      "80772177",
+      "81104409"
+    ],
+    "4": [
+      "85511643",
+      "88331083",
+      "92870858",
+      "95110187",
+      "95739701",
+      "95845946",
+      "97483714",
+      "100662048"
+    ],
+    "5": [
+      "101646531",
+      "60866241",
+      "62810171",
+      "69838773",
+      "74555090",
+      "78179052",
+      "82456401",
+      "100360127"
+    ],
+    "6": [
+      "102842483",
+      "57789275",
+      "68628682",
+      "68900439",
+      "69897364",
+      "79054145"
+    ],
+    "7": [
+      "80451039",
+      "89942196",
+      "91611340",
+      "101582095",
+      "103457731",
+      "46257586",
+      "71000075",
+      "63037800"
+    ]
+  },
+  "wave_sha256": "b7f89a8866c33d3ce5da3928bef911c326075a9dc899afccf633b10e1efb777c"
+}
