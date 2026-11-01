@@ -37,7 +37,6 @@ jobs:
       OMP_NUM_THREADS: '1'
       PYTHONUNBUFFERED: '1'
       MPLBACKEND: Agg
-      TESS_REPLAY_CACHE: ${{ runner.temp }}/tess-wave-fits
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -52,4 +51,7 @@ jobs:
           key: tess-wave-${{ runner.os }}-${{ matrix.partition }}-${{ hashFiles('registry/batches/2026-11-01-wave-60-negative/manifest.json') }}
           restore-keys: |
             tess-wave-${{ runner.os }}-${{ matrix.partition }}-
-      - run: python -B registry/batches/2026-11-01-wave-60-negative/replay.py --partition "${{ matrix.partition }}"
+      - name: Replay exact MAST products and aliases
+        run: python -B registry/batches/2026-11-01-wave-60-negative/replay.py --partition "${{ matrix.partition }}"
+        env:
+          TESS_REPLAY_CACHE: ${{ runner.temp }}/tess-wave-fits
