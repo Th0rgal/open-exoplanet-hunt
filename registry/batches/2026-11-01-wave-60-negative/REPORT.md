@@ -22,6 +22,6 @@ The scan-time known-object index and its source receipts are recorded in `catalo
 
 The public replay uses the pinned public engine commit listed in `provenance.json`. Its scientific script hashes match the versions used for the hosted scan. `replay.py` downloads each recorded MAST product, verifies its SHA-256, and reproduces every primary result and fixed alias exactly. Run one partition with `python -B registry/batches/2026-11-01-wave-60-negative/replay.py --partition 0`. Dependencies are pinned in `replay-requirements.txt`.
 
-The original wave completed with hosted `verify_all.py` checks on all resumed workers. The exact MAST replay runs across the eight frozen partitions in `replay-wave-60.yml`. The upstream repository verification and adversarial tests run in `verify-candidates.yml`. Their hosted results are visible in the pull request checks.
+The original wave completed with hosted `verify_all.py` checks on all resumed workers. The exact MAST replay runs across the eight frozen partitions in `replay-wave-60.yml`. Its one-time `verify` job runs repository verification and adversarial tests. Hosted results are visible in the Actions run and pull request checks.
 
 Credit belongs to TESS, MAST, SPOC, QLP, catalog providers, and Open Exoplanet Hunt contributors. Codex assisted with execution and preparation. No human scientific review or independent confirmation is claimed.

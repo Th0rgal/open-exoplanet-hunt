@@ -1,5 +1,11 @@
 name: Replay negative TESS batch
 on:
+  push:
+    branches:
+      - 'scan/2026-11-01-wave-60-negative'
+    paths:
+      - 'registry/batches/2026-11-01-wave-60-negative/**'
+      - '.github/workflows/replay-wave-60.yml'
   pull_request:
     paths:
       - 'registry/batches/2026-11-01-wave-60-negative/**'
@@ -7,6 +13,17 @@ on:
 permissions:
   contents: read
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r registry/batches/2026-11-01-wave-60-negative/replay-requirements.txt
+      - run: python -B scripts/verify_all.py
+      - run: python -B -m unittest discover -s tests -v
   replay:
     runs-on: ubuntu-latest
     timeout-minutes: 90
