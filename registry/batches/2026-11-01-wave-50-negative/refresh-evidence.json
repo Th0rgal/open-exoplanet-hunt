@@ -1,0 +1,122 @@
+{
+  "execution_authorized": false,
+  "external_catalog_receipts": [
+    {
+      "name": "catalog-exominer_labeled_tces.json",
+      "sha256": "e13eb2538ca5ea6c0b9d27be9eb771aa2ffe65af975e849e2308cb3c19a78794"
+    },
+    {
+      "name": "catalog-exominer_unknown_tces.json",
+      "sha256": "a7d6dc3bfedb76d066da394707f6a44c40648e7e72eef9019654515a4e94b93d"
+    },
+    {
+      "name": "catalog-external_candidates.json",
+      "sha256": "dbe5e1ce0e15cac0d15ca3d85c4d80b3624d975cc7a300f9f49d0da5402ab994"
+    },
+    {
+      "name": "catalog-raven_large_radius_signals.json",
+      "sha256": "b24fbfee025486668b2a92c42c554c3390ddf325016f8a402fa5a40d1332338b"
+    },
+    {
+      "name": "catalog-raven_validated_signals.json",
+      "sha256": "cfd60fb0299b79f52cdbeafc572f1b48273e82e7ce1537d918f44cd72a66d186"
+    },
+    {
+      "name": "catalog-raven_vetted_signals.json",
+      "sha256": "98322d39ec51ce32aba1fbfbeb87f53b4a8166aa8625e7c19c29b97af58cd770"
+    },
+    {
+      "name": "catalog-t16_periodic_candidates.json",
+      "sha256": "c8f5d02b38176c45e3259658e1351d7470ea9f273e6a0b84b04d06a7fa79684b"
+    },
+    {
+      "name": "catalog-t16_single_transit_candidates.json",
+      "sha256": "10db3c9e22af1ec38ea9c7342e5f383c4d0aa20894a1a99029e21442b30686f2"
+    },
+    {
+      "name": "catalog-tess_eb.json",
+      "sha256": "94162969f0a47849ac156d5d0c48d29f21357aa955f2824e05803da1c5eb7e2e"
+    },
+    {
+      "name": "catalog-tess_eb_kostov2025.json",
+      "sha256": "8db90bf0f560dd73c7e9d965b8c95cef3080dfddde1f905bd324737488a86808"
+    },
+    {
+      "name": "catalog-tess_eb_live_villanova.json",
+      "sha256": "6224effd4377fa7a974c3c6131d3df0ad4b8e62a2dd37c35b01c33d7f5eb0088"
+    }
+  ],
+  "latest_metadata_refresh_execution_authorized": false,
+  "latest_metadata_refresh_run_id": "41300402402",
+  "latest_metadata_refresh_status": "COLLISION",
+  "latest_official_source_receipts": [
+    {
+      "bytes": 1818654,
+      "retrieved_utc": "2026-11-01T11:07:59.952941+00:00",
+      "rows": 6451,
+      "sha256": "caefd88af355943484fbd81ab0e0f79924d1c58a536b0d0d50602aa8aba7f005",
+      "source": "confirmed",
+      "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name,hostname,tic_id,disc_year,discoverymethod,disc_facility,pl_orbper,pl_rade,ra,dec,sy_dist+from+pscomppars&format=json"
+    },
+    {
+      "bytes": 2300026,
+      "retrieved_utc": "2026-11-01T11:08:01.895914+00:00",
+      "rows": 8151,
+      "sha256": "0eac437a503b4dea524f47ba0ba1e148786f8f606a9ff5656582e78dcde03222",
+      "source": "toi",
+      "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+toi,tid,tfopwg_disp,pl_orbper,pl_tranmid,pl_trandep,pl_trandurh,pl_rade,st_tmag,st_teff,st_rad,st_dist+from+toi&format=json"
+    },
+    {
+      "bytes": 2335190,
+      "retrieved_utc": "2026-11-01T11:08:03.294886+00:00",
+      "rows": 5139,
+      "sha256": "9e11710eaa5604343bef02d6d4b8b6b087f0d335c9213453345a5d2a6243d1f9",
+      "source": "ctoi",
+      "url": "https://exofop.ipac.caltech.edu/tess/download_ctoi.php?sort=ctoi&output=csv"
+    }
+  ],
+  "limitations": [
+    "TIC-based membership checks do not replace an exhaustive literature or coordinate-based novelty review",
+    "The latest refresh reports local_coverage because this completed wave is already recorded in the private registry"
+  ],
+  "plan_sha256": "2bf20856f1d961d76aff74d00697680b63a25cb6977d0573e0d49b1bb72a06a5",
+  "search_time_index_sha256": "6bd3d6fd79c985093190ea13e55797e9a05e56838090b1a66e15895651b80810",
+  "search_time_official_source_receipts": [
+    {
+      "bytes": 1818654,
+      "retrieved_utc": "2026-11-01T09:59:38.191053+00:00",
+      "rows": 6451,
+      "sha256": "caefd88af355943484fbd81ab0e0f79924d1c58a536b0d0d50602aa8aba7f005",
+      "source": "confirmed",
+      "unique_tics": 4551,
+      "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+pl_name,hostname,tic_id,disc_year,discoverymethod,disc_facility,pl_orbper,pl_rade,ra,dec,sy_dist+from+pscomppars&format=json"
+    },
+    {
+      "bytes": 2300026,
+      "retrieved_utc": "2026-11-01T09:59:39.892061+00:00",
+      "rows": 8151,
+      "sha256": "0eac437a503b4dea524f47ba0ba1e148786f8f606a9ff5656582e78dcde03222",
+      "source": "toi",
+      "unique_tics": 7826,
+      "url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+toi,tid,tfopwg_disp,pl_orbper,pl_tranmid,pl_trandep,pl_trandurh,pl_rade,st_tmag,st_teff,st_rad,st_dist+from+toi&format=json"
+    },
+    {
+      "bytes": 2335190,
+      "retrieved_utc": "2026-11-01T09:59:41.476909+00:00",
+      "rows": 5139,
+      "sha256": "9e11710eaa5604343bef02d6d4b8b6b087f0d335c9213453345a5d2a6243d1f9",
+      "source": "ctoi",
+      "unique_tics": 4936,
+      "url": "https://exofop.ipac.caltech.edu/tess/download_ctoi.php?sort=ctoi&output=csv"
+    }
+  ],
+  "search_time_refresh_run_id": "41296257761",
+  "search_time_status": "NO_INDEXED_COLLISION",
+  "upstream_registry": {
+    "commit": "19e5e9e8ca72c8e584fd08a92276d285ca474888",
+    "retrieved_utc": "2026-11-01T11:08:03.829309+00:00",
+    "rows": 1250,
+    "sha256": "9d4cabc381f598b8587a5039f1011f60ee4830c05166b92eff2e62b1f72213d4",
+    "url": "https://raw.githubusercontent.com/Th0rgal/open-exoplanet-hunt/19e5e9e8ca72c8e584fd08a92276d285ca474888/registry/scanned_targets.jsonl"
+  }
+}
