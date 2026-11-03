@@ -1,5 +1,11 @@
 name: Replay negative 63-target TESS wave
 on:
+  push:
+    branches:
+      - 'scan/2026-11-03-wave-63-negative'
+    paths:
+      - 'registry/batches/2026-11-03-wave-63-negative/**'
+      - '.github/workflows/replay-wave-63.yml'
   pull_request:
     paths:
       - 'registry/batches/2026-11-03-wave-63-negative/**'
